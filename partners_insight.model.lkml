@@ -46,3 +46,9 @@ explore: meta_data {
     label: "Unique Customers"
     persist_with: central_dwh_orders
 }
+
+explore: orders_hour_weekday {
+  view_label: "Orders Hour Weekday"
+  label: "Orders Hour Weekday"
+  persist_with: central_dwh_orders
+}

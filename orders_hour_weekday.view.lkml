@@ -1,10 +1,9 @@
-view: unique_customers {
-  label: "unique_customers"
+view: orders_hour_weekday {
+  label: "orders_hour_weekday"
   derived_table: {
-    sql: SELECT *,
-        CAST(report_period as string) as date_string
-    FROM dhh-ncr-stg.dev_sales_revenue.partnerships_company_monthly_stats ;;
-  }
+    sql: SELECT *
+    FROM dhh-ncr-stg.dev_sales_revenue.partnerships_dh_orders_by_hour;;
+    }
 
   dimension: report_period_weekday {
     type: string
@@ -32,37 +31,40 @@ view: unique_customers {
               ElSE NULL END;;
   }
 
-  dimension_group: order {
-    #convert_tz: no
-    type: time
-    datatype: datetime
-    description: "Local time when the order was placed. This is partitioning column."
-    timeframes: [
-      raw,
-      hour,
-      hour_of_day,
-      time,
-      date,
-      week,
-      day_of_week,
-      week_of_year,
-      month,
-      month_name,
-      quarter,
-      year
-    ]
-    sql: ${TABLE}.report_period ;;
+
+  dimension: report_period_hour {
+    hidden: yes
+    type: number
+    sql: ${TABLE}.report_period_hour ;;
   }
 
-  dimension: date_string {
+  dimension: daytime_distribution {
+    order_by_field: daytime_distribution_sorting
     type: string
-    sql: ${TABLE}.date_string ;;
+    sql: CASE WHEN ${report_period_hour} >= 7 and ${report_period_hour} < 11
+                THEN 'Breakfast'
+              WHEN ${report_period_hour} >= 11 and ${report_period_hour} < 14
+                THEN 'Lunch'
+              WHEN ${report_period_hour} >= 14 and ${report_period_hour} < 17
+                THEN 'Late Lunch/Snack'
+              WHEN ${report_period_hour} >= 17 and ${report_period_hour} < 20
+                THEN 'Dinner'
+              WHEN (${report_period_hour} >= 20 and ${report_period_hour} <= 23) or (${report_period_hour} >= 0 and ${report_period_hour} < 7)
+                THEN 'Late Night'
+              ELSE NULL
+              END;;
   }
 
-  dimension: date {
-    order_by_field: order_month
-    group_label: "Date Dimension"
-    sql: CONCAT(${order_month_name} ," ", format_datetime('%y',${TABLE}.report_period));;
+  dimension: daytime_distribution_sorting {
+    type: number
+    hidden: yes
+    sql: CASE WHEN ${daytime_distribution} = 'Breakfast' THEN 1
+              WHEN ${daytime_distribution} = 'Lunch' THEN 2
+              WHEN ${daytime_distribution} = 'Late Lunch/Snack' THEN 3
+              WHEN ${daytime_distribution} = 'Dinner' THEN 4
+              WHEN ${daytime_distribution} = 'Late Night' THEN 5
+              ELSE NULL
+              END;;
   }
 
 
@@ -88,32 +90,12 @@ view: unique_customers {
 
 
 
-  dimension: product_company {
-    group_label: "Product"
-    type: string
-    sql: ${TABLE}.product_company ;;
-  }
-
-
-
-  measure: total_vendor{
-    label: "Total Vendors"
-    type:  sum
-    sql: ${TABLE}.restaurants ;;
-  }
-
   measure: total_order {
     label: "Successful Orders"
     type:  sum
     sql:${TABLE}.orders;;
   }
 
-
-  measure: total_customers {
-    label: "Total Customers"
-    type:  sum
-    sql:${TABLE}.users;;
-  }
 
 
 }
