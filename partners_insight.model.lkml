@@ -7,12 +7,13 @@ datagroup: central_dwh_orders {
   max_cache_age: "24 hours"
 }
 
-explore: product_level_daily {
-  view_label: "Orders"
-  label: "Orders"
+explore: product_level {
+  view_label: "Product"
+  label: "Product"
   persist_with: central_dwh_orders
 
 }
+
 
 explore: market_share {
   view_label: "Market Share"
@@ -26,4 +27,22 @@ explore: top_restaurants {
   label: "Top Restaurants"
   persist_with: central_dwh_orders
 
+}
+
+explore: meta_data {
+  view_label: "MetaData"
+  label: "MetaData"
+  persist_with: central_dwh_orders
+}
+
+  explore: check {
+    view_label: "Check"
+    label: "Check"
+    persist_with: central_dwh_orders
+}
+
+  explore: unique_customers {
+    view_label: "Unique Customers"
+    label: "Unique Customers"
+    persist_with: central_dwh_orders
 }

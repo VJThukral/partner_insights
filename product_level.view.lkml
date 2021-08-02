@@ -1,10 +1,11 @@
-view: product_level_daily {
-  label: "product_level_daily"
+view: product_level {
+label: "product_level"
   derived_table: {
-    sql:SELECT opa.global_entity_id,
+    sql:SELECT
+    opa.period_seg,
+    opa.global_entity_id,
     opa.country_name,
     opa.report_period,
-    EXTRACT(HOUR FROM oi.placed_at_local) AS report_period_hour,
     opa.city_group,
     opa.category_group_global,
     opa.is_key_account,
@@ -18,30 +19,35 @@ view: product_level_daily {
     opa.product_size_unit,
     opa.is_option,
     opa.is_upsell,
-    opa.vendor_id,
-    opa.order_id,
-    opa.customer_id,
+    restaurants,
+    opa.orders,
     opa.quantity,
     opa.total_price_lc,
     opa.total_price_eur,
     CAST(report_period as string) as date_string
-    FROM `dhh-ncr-stg.dev_sales_revenue.partnerships_order_level` AS opa
-        INNER JOIN fulfillment-dwh-production.curated_data_shared_central_dwh.orders AS oi
-            ON oi. global_entity_id = opa. global_entity_id
-            AND oi. order_id = opa. order_id
-            AND oi. vendor_id = opa. vendor_id
-        WHERE oi.placed_at_local > DATE_SUB(CURRENT_DATE(), INTERVAL 6 MONTH)
-        AND oi.placed_at_local > '2021-05-01'
+    FROM `dhh-ncr-stg.dev_sales_revenue.partnerships_product_level` AS opa
 ;;
     }
 
 
-  parameter: date_granularity {
+  dimension: date_granularity {
     type: string
-    allowed_value: { value: "Weekly" }
-    allowed_value: { value: "Monthly" }
-    allowed_value: { value: "Daily" }
+    sql: ${TABLE}.period_seg ;;
+  }
 
+  dimension: date {
+    order_by_field: order_date
+    group_label: "Date Dimension"
+    sql:
+    CASE
+      WHEN ${date_granularity} = 'Daily'
+        THEN ${date_string}
+      WHEN ${date_granularity} = 'Monthly'
+        THEN CONCAT(${order_month_name} ," ", format_datetime('%y',${TABLE}.report_period))
+      WHEN ${date_granularity} = 'Weekly'
+        THEN ${order_week}
+      ELSE NULL
+    END ;;
   }
 
   dimension_group: order {
@@ -69,55 +75,6 @@ view: product_level_daily {
   dimension: date_string {
     type: string
     sql: ${TABLE}.date_string ;;
-  }
-
-  dimension: report_period_hour {
-    hidden: yes
-    type: number
-    sql: ${TABLE}.report_period_hour ;;
-  }
-
-  dimension: daytime_distribution {
-    type: string
-    sql: CASE WHEN ${report_period_hour} >= 7 and ${report_period_hour} < 11
-                THEN 'Breakfast'
-              WHEN ${report_period_hour} >= 11 and ${report_period_hour} < 14
-                THEN 'Lunch'
-              WHEN ${report_period_hour} >= 14 and ${report_period_hour} < 17
-                THEN 'Late Lunch/Snack'
-              WHEN ${report_period_hour} >= 17 and ${report_period_hour} < 20
-                THEN 'Dinner'
-              WHEN (${report_period_hour} >= 20 and ${report_period_hour} <= 23) or (${report_period_hour} >= 0 and ${report_period_hour} < 7)
-                THEN 'Late Night'
-              ELSE NULL
-              END;;
-  }
-
-  dimension: daytime_distribution_sorting {
-    type: number
-    sql: CASE WHEN ${daytime_distribution} = 'Breakfast' THEN 1
-              WHEN ${daytime_distribution} = 'Lunch' THEN 2
-              WHEN ${daytime_distribution} = 'Late Lunch/Snack' THEN 3
-              WHEN ${daytime_distribution} = 'Dinner' THEN 4
-              WHEN ${daytime_distribution} = 'Late Night' THEN 5
-              ELSE NULL
-              END;;
-  }
-
-  dimension: date {
-    label_from_parameter: date_granularity
-    order_by_field: order_month
-    group_label: "Date Dimension"
-    sql:
-    CASE
-      WHEN {% parameter date_granularity %} = 'Daily'
-        THEN ${date_string}
-      WHEN {% parameter date_granularity %} = 'Monthly'
-        THEN CONCAT(${order_month_name} ," ", format_datetime('%y',${TABLE}.report_period))
-      WHEN {% parameter date_granularity %} = 'Weekly'
-        THEN ${order_week}
-      ELSE NULL
-    END ;;
   }
 
   parameter: currency_picker {
@@ -160,7 +117,7 @@ view: product_level_daily {
         THEN ${product_company_market}
       WHEN {% parameter breakdown_type %} = 'Product Sub-Category'
         THEN ${product_subtype}
-      ELSE NULL
+      ELSE 'None'
     END ;;
   }
 
@@ -173,6 +130,7 @@ view: product_level_daily {
   }
 
   dimension: country {
+    full_suggestions: yes
     type: string
     group_label: "Global Entity"
     sql: ${TABLE}.country_name ;;
@@ -252,6 +210,7 @@ view: product_level_daily {
 
   filter: brand_select {
     suggest_dimension: product_company
+
   }
 
   dimension: brand_comparitor {
@@ -261,6 +220,13 @@ view: product_level_daily {
      THEN ${product_company}
      ELSE "Others"
      END ;;
+  }
+
+  dimension: brand_product_show {
+    sql: CASE WHEN ${brand_comparitor} = 'Others'
+          THEN 'Others'
+          ELSE ${product_name}
+          END;;
   }
 
   dimension: product_company_market {
@@ -323,9 +289,8 @@ view: product_level_daily {
   measure: total_vendors {
     label: "Number of Total Vendors"
     description: "Number of unique vendor ids with a successful order"
-    group_label: "Vendor KPIs"
-    type: count_distinct
-    sql: ${unique_vendor_id} ;;
+    type: sum
+    sql: ${TABLE}.restaurants ;;
   }
 
   measure: total_quantity {
@@ -338,8 +303,8 @@ view: product_level_daily {
   measure: total_order {
     description: "Only Successful Orders"
     label: "Successful Orders"
-    type:  count_distinct
-    sql: ${TABLE}.order_id ;;
+    type:  sum
+    sql: ${TABLE}.orders ;;
   }
 
   measure: total_price {
@@ -350,6 +315,25 @@ view: product_level_daily {
       WHEN {% parameter currency_picker %} = 'eur'
         THEN ${TABLE}.total_price_eur
       ELSE ${TABLE}.total_price_lc
+    END ;;
+  }
+
+  measure: total_cat_quantity {
+    description: "Only Successful Orders"
+    label: "Total Category Volume"
+    type:  sum
+    sql: CASE WHEN ${product_company} IS NOT NULL THEN ${TABLE}.quantity ELSE NULL END ;;
+  }
+
+
+  measure: total_cat_price {
+    label: "Total Category Price "
+    type: sum
+    sql:
+      CASE
+      WHEN ${product_company} IS NOT NULL
+        THEN ${TABLE}.total_price_eur
+      ELSE NULL
     END ;;
   }
 }

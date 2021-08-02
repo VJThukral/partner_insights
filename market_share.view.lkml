@@ -10,18 +10,13 @@ view: market_share {
           opa.product_company,
           opa.product_subtype,
           opa.product_name,
-          opa.order_id,
+          opa.orders,
           opa.quantity,
           opa.total_price_eur,
           opa.total_price_lc,
-          CAST(report_period as string) as date_string
-          FROM `dhh-ncr-stg.dev_sales_revenue.partnerships_order_level` AS opa
-              INNER JOIN fulfillment-dwh-production.curated_data_shared_central_dwh.orders AS oi
-                  ON oi. global_entity_id = opa. global_entity_id
-                  AND oi. order_id = opa. order_id
-                  AND oi. vendor_id = opa. vendor_id
-              WHERE placed_at_local > DATE_SUB(CURRENT_DATE(), INTERVAL 3 MONTH)
-      ;;
+          CAST(opa.report_period as string) as date_string,
+          FROM `dhh-ncr-stg.dev_sales_revenue.partnerships_product_level` AS opa
+            ;;
   }
 
 
@@ -76,6 +71,12 @@ view: market_share {
     END ;;
   }
 
+  dimension: is_key_account {
+    type: yesno
+    sql: ${TABLE}.is_key_account ;;
+  }
+
+
   parameter: currency_picker {
     type: string
     label: "Currency"
@@ -112,11 +113,6 @@ view: market_share {
     sql: ${TABLE}.city_group ;;
   }
 
-  dimension: is_key_account {
-    group_label: "Business Line"
-    type: yesno
-    sql: ${TABLE}.is_key_account ;;
-  }
 
   dimension: order_id {
     primary_key: yes
@@ -176,7 +172,6 @@ view: market_share {
   }
 
 
-
   measure: total_quantity {
     description: "Only Successful Orders"
     label: "Total Volume"
@@ -187,9 +182,10 @@ view: market_share {
   measure: total_order {
     description: "Only Successful Orders"
     label: "Successful Orders"
-    type:  count_distinct
-    sql: ${TABLE}.order_id ;;
+    type:  sum
+    sql:${TABLE}.orders;;
   }
+
 
   measure: total_price {
     label: "Total Price "
