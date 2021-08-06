@@ -43,7 +43,7 @@ label: "product_level"
       WHEN ${date_granularity} = 'Daily'
         THEN ${date_string}
       WHEN ${date_granularity} = 'Monthly'
-        THEN CONCAT(${order_month_name} ," ", format_datetime('%y',${TABLE}.report_period))
+        THEN format_datetime('%b %y',${TABLE}.report_period)
       WHEN ${date_granularity} = 'Weekly'
         THEN ${order_week}
       ELSE NULL

@@ -62,7 +62,7 @@ view: unique_customers {
   dimension: date {
     order_by_field: order_month
     group_label: "Date Dimension"
-    sql: CONCAT(${order_month_name} ," ", format_datetime('%y',${TABLE}.report_period));;
+    sql: format_datetime('%b %y',${TABLE}.report_period);;
   }
 
 

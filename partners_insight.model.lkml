@@ -15,13 +15,6 @@ explore: product_level {
 }
 
 
-explore: market_share {
-  view_label: "Market Share"
-  label: "Market Share"
-  persist_with: central_dwh_orders
-
-}
-
 explore: top_restaurants {
   view_label: "Top Restaurants"
   label: "Top Restaurants"
