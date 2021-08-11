@@ -80,6 +80,11 @@ view: meta_data {
     sql: ${TABLE}.is_key_account ;;
   }
 
+  dimension: store_type {
+    type: string
+    sql: ${TABLE}.store_type_group ;;
+  }
+
 
   measure: orders {
     type: sum

@@ -7,6 +7,7 @@ view: check {
             report_period,
             city_group,
             category_group_global,
+            store_type_group,
             is_key_account,
             product_company,
             product_name,
@@ -26,6 +27,7 @@ view: check {
             report_period,
             city_group,
             category_group_global,
+            store_type_group,
             is_key_account,
             product_company,
             "All Brands" AS product_name,
@@ -144,6 +146,11 @@ view: check {
     group_label: "Product"
     type: string
     sql: ${TABLE}.product_name ;;
+  }
+
+  dimension: store_type {
+    type: string
+    sql: ${TABLE}.store_type_group ;;
   }
 
   measure: total_customers {

@@ -179,10 +179,10 @@ label: "product_level"
     sql: ${TABLE}.customer_id ;;
   }
 
-  dimension: store_stype {
+  dimension: store_type {
     group_label: "Business Line"
     type: string
-    sql: ${TABLE}.store_type_l1 ;;
+    sql: ${TABLE}.store_type_group ;;
   }
 
   dimension: is_option{

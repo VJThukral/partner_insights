@@ -12,6 +12,25 @@ explore: product_level {
   label: "Product"
   persist_with: central_dwh_orders
 
+  access_filter: {
+    field: product_name
+    user_attribute: brand
+  }
+
+  access_filter: {
+    field: store_type
+    user_attribute: shoptype
+  }
+
+  access_filter: {
+    field: product_company
+    user_attribute: company
+  }
+
+  access_filter: {
+    field: country
+    user_attribute: country
+  }
 }
 
 
@@ -20,28 +39,84 @@ explore: top_restaurants {
   label: "Top Restaurants"
   persist_with: central_dwh_orders
 
+  access_filter: {
+    field: product_company
+    user_attribute: company
+  }
+
+  access_filter: {
+    field: country_name
+    user_attribute: country
+  }
+
 }
 
 explore: meta_data {
   view_label: "MetaData"
   label: "MetaData"
   persist_with: central_dwh_orders
+
+  access_filter: {
+    field: store_type
+    user_attribute: shoptype
+  }
+
+  access_filter: {
+    field: country
+    user_attribute: country
+  }
 }
 
   explore: check {
     view_label: "Check"
     label: "Check"
     persist_with: central_dwh_orders
+
+    access_filter: {
+      field: product_name
+      user_attribute: brand
+    }
+
+    access_filter: {
+      field: store_type
+      user_attribute: shoptype
+    }
+
+    access_filter: {
+      field: product_company
+      user_attribute: company
+    }
+
+    access_filter: {
+      field: country
+      user_attribute: country
+    }
 }
 
   explore: unique_customers {
     view_label: "Unique Customers"
     label: "Unique Customers"
     persist_with: central_dwh_orders
+
+    access_filter: {
+      field: product_company
+      user_attribute: company
+    }
+
+    access_filter: {
+      field: country
+      user_attribute: country
+    }
 }
 
 explore: orders_hour_weekday {
   view_label: "Orders Hour Weekday"
   label: "Orders Hour Weekday"
   persist_with: central_dwh_orders
+
+
+  access_filter: {
+    field: country
+    user_attribute: country
+  }
 }
