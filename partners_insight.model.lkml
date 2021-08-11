@@ -23,6 +23,11 @@ explore: product_level {
   }
 
   access_filter: {
+    field: store_type
+    user_attribute: shoptype
+  }
+
+  access_filter: {
     field: country
     user_attribute: country
   }
@@ -36,6 +41,11 @@ explore: product_level_2 {
   access_filter: {
     field: country
     user_attribute: country
+  }
+
+  access_filter: {
+    field: store_type
+    user_attribute: shoptype
   }
 }
 
@@ -62,6 +72,10 @@ explore: meta_data {
   label: "MetaData"
   persist_with: central_dwh_orders
 
+  access_filter: {
+    field: store_type
+    user_attribute: shoptype
+  }
 
   access_filter: {
     field: country
@@ -80,6 +94,10 @@ explore: meta_data {
       user_attribute: brand
     }
 
+    access_filter: {
+      field: store_type
+      user_attribute: shoptype
+    }
 
     access_filter: {
       field: product_company
