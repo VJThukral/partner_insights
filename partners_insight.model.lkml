@@ -110,6 +110,32 @@ explore: meta_data {
     }
 }
 
+explore: check_with_upselling {
+  view_label: "Company Level with Upselling"
+  label: "Company Level with Upselling"
+  persist_with: central_dwh_orders
+
+  access_filter: {
+    field: product_name
+    user_attribute: brand
+  }
+
+  access_filter: {
+    field: store_type
+    user_attribute: shoptype
+  }
+
+  access_filter: {
+    field: product_company
+    user_attribute: company
+  }
+
+  access_filter: {
+    field: country
+    user_attribute: country
+  }
+}
+
   explore: unique_customers {
     view_label: "Unique Customers"
     label: "Unique Customers"
