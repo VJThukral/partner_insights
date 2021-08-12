@@ -200,10 +200,16 @@ label: "product_level"
   dimension: product_type {
     group_label: "Product"
     type: string
-    sql: CASE WHEN ${is_upsell} THEN 'Upselling'
-              WHEN ${is_option} IS TRUE AND ${is_upsell} IS NOT TRUE THEN 'Option'
-              WHEN ${is_option} IS NOT TRUE AND ${is_upsell} IS NOT TRUE THEN 'Product'
-              ELSE NULL
+    sql: CASE WHEN ${is_option} IS TRUE THEN 'Option'
+              ELSE 'Product'
+              END;;
+  }
+
+  dimension: upselling {
+    group_label: "Product"
+    type: string
+    sql: CASE WHEN ${is_upsell} IS TRUE THEN 'With Upselling'
+              ELSE 'Without Upselling'
               END;;
   }
 
