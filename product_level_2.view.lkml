@@ -296,6 +296,7 @@ view: product_level_2 {
     description: "Number of unique vendor ids with a successful order"
     type: sum
     sql: ${TABLE}.restaurants ;;
+    value_format_name: decimal_0
   }
 
   measure: total_quantity {
@@ -303,6 +304,7 @@ view: product_level_2 {
     label: "Total Volume"
     type:  sum
     sql: ${TABLE}.quantity ;;
+    value_format_name: decimal_0
   }
 
   measure: total_order {
@@ -310,6 +312,7 @@ view: product_level_2 {
     label: "Successful Orders"
     type:  sum
     sql: ${TABLE}.orders ;;
+    value_format_name: decimal_0
   }
 
   measure: total_price {
@@ -321,6 +324,7 @@ view: product_level_2 {
         THEN ${TABLE}.total_price_eur
       ELSE ${TABLE}.total_price_lc
     END ;;
+    value_format_name: decimal_2
   }
 
   measure: total_cat_quantity {
@@ -328,6 +332,7 @@ view: product_level_2 {
     label: "Total Category Volume"
     type:  sum
     sql: CASE WHEN ${product_company} IS NOT NULL THEN ${TABLE}.quantity ELSE NULL END ;;
+    value_format_name: decimal_0
   }
 
 
@@ -340,5 +345,6 @@ view: product_level_2 {
         THEN ${TABLE}.total_price_eur
       ELSE NULL
     END ;;
+    value_format_name: decimal_2
   }
 }
