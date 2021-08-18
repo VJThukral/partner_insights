@@ -13,11 +13,6 @@ explore: product_level {
   persist_with: central_dwh_orders
 
   access_filter: {
-    field: product_name
-    user_attribute: brand
-  }
-
-  access_filter: {
     field: product_company
     user_attribute: company
   }
@@ -28,8 +23,8 @@ explore: product_level {
   }
 
   access_filter: {
-    field: country
-    user_attribute: country
+    field: global_entity_id
+    user_attribute: global_entity_id
   }
 }
 
@@ -39,8 +34,8 @@ explore: product_level_2 {
   persist_with: central_dwh_orders
 
   access_filter: {
-    field: country
-    user_attribute: country
+    field: global_entity_id
+    user_attribute: global_entity_id
   }
 
   access_filter: {
@@ -61,8 +56,8 @@ explore: top_restaurants {
   }
 
   access_filter: {
-    field: country_name
-    user_attribute: country
+    field: global_entity_id
+    user_attribute: global_entity_id
   }
 
 }
@@ -78,8 +73,8 @@ explore: meta_data {
   }
 
   access_filter: {
-    field: country
-    user_attribute: country
+    field: global_entity_id
+    user_attribute: global_entity_id
   }
 
 }
@@ -88,11 +83,6 @@ explore: meta_data {
     view_label: "Check"
     label: "Check"
     persist_with: central_dwh_orders
-
-    access_filter: {
-      field: product_name
-      user_attribute: brand
-    }
 
     access_filter: {
       field: store_type
@@ -105,8 +95,8 @@ explore: meta_data {
     }
 
     access_filter: {
-      field: country
-      user_attribute: country
+      field: global_entity_id
+      user_attribute: global_entity_id
     }
 }
 
@@ -114,11 +104,6 @@ explore: check_with_upselling {
   view_label: "Company Level with Upselling"
   label: "Company Level with Upselling"
   persist_with: central_dwh_orders
-
-  access_filter: {
-    field: product_name
-    user_attribute: brand
-  }
 
   access_filter: {
     field: store_type
@@ -132,8 +117,8 @@ explore: check_with_upselling {
 
 
   access_filter: {
-    field: country
-    user_attribute: country
+    field: global_entity_id
+    user_attribute: global_entity_id
   }
 }
 
@@ -148,8 +133,8 @@ explore: check_with_upselling {
     }
 
     access_filter: {
-      field: country
-      user_attribute: country
+      field: global_entity_id
+      user_attribute: global_entity_id
     }
 }
 
@@ -160,7 +145,7 @@ explore: orders_hour_weekday {
 
 
   access_filter: {
-    field: country
-    user_attribute: country
+    field: global_entity_id
+    user_attribute: global_entity_id
   }
 }
