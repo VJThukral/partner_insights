@@ -2,6 +2,7 @@ view: top_restaurants {
   label: "top_restaurants"
   derived_table: {
     sql:SELECT * FROM `dhh-ncr-stg.dev_sales_revenue.partnerships_top_restaurants`
+    ORDER BY global_entity_id, city_group, product_company,ranking
       ;;
   }
 
