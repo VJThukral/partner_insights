@@ -14,7 +14,7 @@ explore: product_level {
 
   access_filter: {
     field: product_company
-    user_attribute: company
+    user_attribute: product_cpg
   }
 
   access_filter: {
@@ -52,7 +52,7 @@ explore: top_restaurants {
 
   access_filter: {
     field: product_company
-    user_attribute: company
+    user_attribute: product_cpg
   }
 
   access_filter: {
@@ -91,7 +91,7 @@ explore: meta_data {
 
     access_filter: {
       field: product_company
-      user_attribute: company
+      user_attribute: product_cpg
     }
 
     access_filter: {
@@ -112,7 +112,7 @@ explore: check_with_upselling {
 
   access_filter: {
     field: product_company
-    user_attribute: company
+    user_attribute: product_cpg
   }
 
 
@@ -129,7 +129,7 @@ explore: check_with_upselling {
 
     access_filter: {
       field: product_company
-      user_attribute: company
+      user_attribute: product_cpg
     }
 
     access_filter: {
