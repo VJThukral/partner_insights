@@ -8,7 +8,10 @@ view: top_restaurants {
 
   dimension: global_entity_id {}
   dimension: country_name {}
-  dimension: city_group {}
+  dimension: city_group {
+    type: string
+    sql: INITCAP(${TABLE}.city_group) ;;
+  }
   dimension: vendor_id {}
   dimension: product_company {}
   dimension: category_group_global {}
