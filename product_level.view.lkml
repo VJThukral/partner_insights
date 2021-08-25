@@ -122,7 +122,6 @@ label: "product_level"
   }
 
   dimension: global_entity_id {
-    hidden: yes
     type: string
     group_label: "Global Entity"
     description: "GEID, identifier for the sub_entity/brand. Example: 'CD_CO', 'PY_AR', etc."
