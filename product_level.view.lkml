@@ -265,7 +265,7 @@ label: "product_level"
     group_label: "Product"
     hidden: yes
     type: number
-    sql:CASE WHEN ${TABLE}.quantity > 2 THEN ${TABLE}.product_size_numeral ELSE NULL END;;
+    sql:CASE WHEN ${TABLE}.quantity > 50 THEN ${TABLE}.product_size_numeral ELSE NULL END;;
   }
 
   dimension: product_size {
