@@ -133,12 +133,12 @@ view: check {
     sql: ${TABLE}.is_key_account ;;
   }
 
-
-
   dimension: product_company {
     group_label: "Product"
     type: string
-    sql: ${TABLE}.product_company ;;
+    sql: CASE WHEN ${TABLE}.product_company = 'Coca-Cola Company' THEN 'Coca Cola'
+         WHEN ${TABLE}.product_company = 'PepsiCo' THEN 'Pepsico'
+          ELSE ${TABLE}.product_company END;;
   }
 
   dimension: product_name {

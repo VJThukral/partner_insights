@@ -13,7 +13,13 @@ view: top_restaurants {
     sql: INITCAP(${TABLE}.city_group) ;;
   }
   dimension: vendor_id {}
-  dimension: product_company {}
+  dimension: product_company {
+    group_label: "Product"
+    type: string
+    sql: CASE WHEN ${TABLE}.product_company = 'Coca-Cola Company' THEN 'Coca Cola'
+         WHEN ${TABLE}.product_company = 'PepsiCo' THEN 'Pepsico'
+          ELSE ${TABLE}.product_company END;;
+  }
   dimension: category_group_global {}
   dimension: vendor_name {}
   dimension: street {}
