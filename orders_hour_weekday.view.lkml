@@ -83,11 +83,17 @@ view: orders_hour_weekday {
   }
 
   dimension: city{
+    order_by_field: city_sorting
     type: string
     group_label: "Global Entity"
-    sql: ${TABLE}.city_group ;;
+    sql: INITCAP(${TABLE}.city_group);;
   }
 
+  dimension: city_sorting{
+    type: string
+    group_label: "Global Entity"
+    sql: CASE WHEN ${city} = "Other" Then "ω" ELSE ${city} END;;
+  }
 
 
   measure: total_order {

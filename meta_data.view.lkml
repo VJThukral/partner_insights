@@ -70,9 +70,16 @@ view: meta_data {
   }
 
   dimension: city{
+    order_by_field: city_sorting
     type: string
     group_label: "Global Entity"
-    sql: ${TABLE}.city_group ;;
+    sql: INITCAP(${TABLE}.city_group);;
+  }
+
+  dimension: city_sorting{
+    type: string
+    group_label: "Global Entity"
+    sql: CASE WHEN ${city} = "Other" Then "ω" ELSE ${city} END;;
   }
 
   dimension: is_key_account {
