@@ -1,4 +1,4 @@
-view: check {
+view: product_level_without_upselling {
   derived_table: {
     sql:SELECT
             global_entity_id,

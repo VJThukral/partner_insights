@@ -82,9 +82,9 @@ explore: meta_data {
 
 }
 
-  explore: check {
-    view_label: "Check"
-    label: "Check"
+  explore: product_level_without_upselling {
+    view_label: "Product Level without Upselling"
+    label: "Product Level without Upselling"
     persist_with: central_dwh_orders
 
     access_filter: {
@@ -103,9 +103,9 @@ explore: meta_data {
     }
 }
 
-explore: check_with_upselling {
-  view_label: "Company Level with Upselling"
-  label: "Company Level with Upselling"
+explore: product_level_with_upselling {
+  view_label: "Product Level with Upselling"
+  label: "Product Level with Upselling"
   persist_with: central_dwh_orders
 
   access_filter: {

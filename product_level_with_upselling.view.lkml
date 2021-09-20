@@ -1,4 +1,4 @@
-view: check_with_upselling {
+view: product_level_with_upselling {
   derived_table: {
     sql:SELECT
             global_entity_id,
