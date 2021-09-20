@@ -30,6 +30,9 @@ explore: product_level {
 
 explore: product_level_2 {
   view_label: "Product 2"
+  always_filter: {
+    filters: [product_level_2.product_company_market: "-NULL"]
+  }
   label: "Product 2"
   persist_with: central_dwh_orders
 
