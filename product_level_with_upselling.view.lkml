@@ -102,6 +102,7 @@ view: product_level_with_upselling {
             total_price_lc,
             total_price_eur
         FROM dhh-ncr-stg.dev_sales_revenue.partnerships_company_level
+        WHERE {% condition date_granularity %} period_seg {% endcondition %}
     ;;
   }
 
