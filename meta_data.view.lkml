@@ -3,7 +3,7 @@ view: meta_data {
   derived_table: {
     sql:SELECT *,
         CAST(report_period as string) as date_string,
-        FROM `dhh-ncr-stg.dev_sales_revenue.partnerships_metadata`
+        FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_metadata`
           ;;
   }
 

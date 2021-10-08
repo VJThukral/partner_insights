@@ -3,7 +3,7 @@ view: unique_customers {
   derived_table: {
     sql: SELECT *,
         CAST(report_period as string) as date_string
-    FROM dhh-ncr-stg.dev_sales_revenue.partnerships_company_monthly_stats ;;
+    FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_company_monthly_stats` ;;
   }
 
   dimension: report_period_weekday {

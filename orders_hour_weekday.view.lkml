@@ -2,7 +2,7 @@ view: orders_hour_weekday {
   label: "orders_hour_weekday"
   derived_table: {
     sql: SELECT *
-    FROM dhh-ncr-stg.dev_sales_revenue.partnerships_dh_orders_by_hour;;
+    FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_dh_orders_by_hour`;;
     }
 
   dimension: report_period_weekday {
