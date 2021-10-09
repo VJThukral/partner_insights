@@ -18,7 +18,7 @@ view: product_level_with_upselling {
             quantity,
             total_price_lc,
             total_price_eur
-        FROM dhh-ncr-stg.dev_sales_revenue.partnerships_product_level
+        FROM fulfillment-dwh-production.rl_sales_revenue.partnerships_product_level
         UNION ALL
         SELECT
             global_entity_id,
@@ -38,7 +38,7 @@ view: product_level_with_upselling {
             SUM(quantity) AS quantity,
             SUM(total_price_lc) AS total_price_lc,
             SUM(total_price_eur) AS total_price_eur
-        FROM dhh-ncr-stg.dev_sales_revenue.partnerships_product_level
+        FROM fulfillment-dwh-production.rl_sales_revenue.partnerships_product_level
         GROUP BY 1,2,3,4,5,6,7,8,9,10,11
         UNION ALL
         SELECT
@@ -59,7 +59,7 @@ view: product_level_with_upselling {
             quantity,
             total_price_lc,
             total_price_eur
-        FROM dhh-ncr-stg.dev_sales_revenue.partnerships_product_level
+        FROM fulfillment-dwh-production.rl_sales_revenue.partnerships_product_level
         WHERE is_upsell IS TRUE
         UNION ALL
                 SELECT
@@ -80,7 +80,7 @@ view: product_level_with_upselling {
             quantity,
             total_price_lc,
             total_price_eur
-        FROM dhh-ncr-stg.dev_sales_revenue.partnerships_product_level
+        FROM fulfillment-dwh-production.rl_sales_revenue.partnerships_product_level
         WHERE is_upsell IS FALSE
         UNION ALL
         SELECT
@@ -101,7 +101,7 @@ view: product_level_with_upselling {
             quantity,
             total_price_lc,
             total_price_eur
-        FROM dhh-ncr-stg.dev_sales_revenue.partnerships_company_level
+        FROM fulfillment-dwh-production.rl_sales_revenue.partnerships_company_level
         WHERE {% condition date_granularity %} period_seg {% endcondition %}
     ;;
   }

@@ -18,7 +18,7 @@ view: product_level_without_upselling {
             quantity,
             total_price_lc,
             total_price_eur
-        FROM dhh-ncr-stg.dev_sales_revenue.partnerships_product_level
+        FROM fulfillment-dwh-production.rl_sales_revenue.partnerships_product_level
         UNION ALL
         SELECT
             global_entity_id,
@@ -38,7 +38,7 @@ view: product_level_without_upselling {
             quantity,
             total_price_lc,
             total_price_eur
-        FROM dhh-ncr-stg.dev_sales_revenue.partnerships_company_level
+        FROM fulfillment-dwh-production.rl_sales_revenue.partnerships_company_level
         WHERE {% condition date_granularity %} period_seg {% endcondition %}
     ;;
     }

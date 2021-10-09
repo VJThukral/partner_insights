@@ -25,7 +25,7 @@ view: product_level_2 {
           opa.total_price_lc,
           opa.total_price_eur,
           CAST(report_period as string) as date_string
-          FROM `dhh-ncr-stg.dev_sales_revenue.partnerships_product_level` AS opa
+          FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_product_level` AS opa
           WHERE {% condition date_granularity %} opa.period_seg {% endcondition %}
       ;;
   }
