@@ -19,7 +19,7 @@ view: product_level_2 {
           opa.product_size_unit,
           opa.is_option,
           opa.is_upsell,
-          restaurants,
+          vendors AS restaurants,
           opa.orders,
           opa.quantity,
           opa.total_price_lc,

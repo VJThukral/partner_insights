@@ -100,7 +100,7 @@ view: meta_data {
 
   measure: restaurants {
     type: sum
-    sql: ${TABLE}.restaurants ;;
+    sql: ${TABLE}.vendors ;;
   }
 
 }

@@ -19,7 +19,7 @@ label: "product_level"
     opa.product_size_unit,
     opa.is_option,
     opa.is_upsell,
-    restaurants,
+    vendors AS restaurants,
     opa.orders,
     opa.quantity,
     opa.total_price_lc,
@@ -307,7 +307,7 @@ label: "product_level"
     label: "Number of Total Vendors"
     description: "Number of unique vendor ids with a successful order"
     type: sum
-    sql: ${TABLE}.restaurants ;;
+    sql: ${TABLE}.vendors ;;
     value_format_name: decimal_0
   }
 
