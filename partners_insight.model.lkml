@@ -42,11 +42,6 @@ explore: product_level_2 {
   }
 
   access_filter: {
-    field: product_company
-    user_attribute: product_cpg
-  }
-
-  access_filter: {
     field: store_type
     user_attribute: shoptype
   }
