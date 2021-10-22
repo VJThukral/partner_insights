@@ -220,26 +220,19 @@ label: "product_level"
               END;;
   }
 
-
-  filter: brand_select {
-    suggest_dimension: product_company
+  filter: brand_selection {
+    suggest_dimension: product_name
 
   }
 
   dimension: brand_comparitor {
+    type: string
     sql:
-     CASE
-     WHEN {% condition brand_select %} ${product_company} {% endcondition %}
-     THEN ${product_company}
-     ELSE "Others"
-     END ;;
-  }
-
-  dimension: brand_product_show {
-    sql: CASE WHEN ${brand_comparitor} = 'Others'
-          THEN 'Others'
-          ELSE ${product_name}
-          END;;
+    CASE
+      WHEN {% condition brand_selection %} ${product_name} {% endcondition %}
+        THEN ${product_name}
+      ELSE "Others"
+    END ;;
   }
 
   dimension: product_company_market {
