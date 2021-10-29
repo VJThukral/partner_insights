@@ -19,10 +19,10 @@ view: meta_data {
     CASE
       WHEN ${date_granularity} = 'Daily'
         THEN ${date_string}
-      WHEN ${date_granularity} = 'Monthly'
-        THEN format_datetime('%b %y',${TABLE}.report_period)
       WHEN ${date_granularity} = 'Weekly'
         THEN ${order_week}
+      WHEN ${date_granularity} = 'Monthly'
+        THEN format_datetime('%b %y',${TABLE}.report_period)
       ELSE NULL
     END ;;
   }
