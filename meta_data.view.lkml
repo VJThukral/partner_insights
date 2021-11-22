@@ -2,6 +2,7 @@ view: meta_data {
   label: "meta_data"
   derived_table: {
     sql:SELECT *,
+        "Others" AS product_company,
         CAST(report_period as string) as date_string,
         FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_metadata`
           ;;
@@ -67,6 +68,12 @@ view: meta_data {
     type: string
     group_label: "Global Entity"
     sql: ${TABLE}.country_name ;;
+  }
+
+  dimension: product_company {
+    type: string
+    group_label: "Global Entity"
+    sql: ${TABLE}.product_company ;;
   }
 
   dimension: city{

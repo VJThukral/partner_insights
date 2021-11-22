@@ -1,33 +1,107 @@
 view: product_level_2 {
   label: "product_level_2"
   derived_table: {
-    sql:SELECT
-          opa.period_seg,
+    sql:WITH market_share AS (
+    SELECT opa.period_seg,
+          CAST(report_period as string) as date_string,
+          opa.report_period,
           opa.global_entity_id,
           opa.country_name,
-          opa.report_period,
           opa.city_group,
           opa.category_group_global,
           opa.is_key_account,
           opa.store_type_group,
+          CASE WHEN opa.product_company = 'Coca-Cola Company' THEN 'Coca Cola'
+          WHEN opa.product_company = 'PepsiCo' THEN 'Pepsico'
+          ELSE opa.product_company END AS product_company,
           opa.product_company_market,
-          opa.product_company,
-          opa.product_type,
           opa.product_subtype,
-          opa.product_name,
-          opa.product_size_numeral,
-          opa.product_size_unit,
           opa.is_option,
           opa.is_upsell,
-          vendors AS restaurants,
-          opa.orders,
-          opa.quantity,
-          opa.total_price_lc,
-          opa.total_price_eur,
-          CAST(report_period as string) as date_string
-          FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_product_level` AS opa
-          WHERE {% condition date_granularity %} opa.period_seg {% endcondition %}
+          SUM(opa.orders) AS orders,
+          SUM(opa.quantity) AS quantity,
+          SUM(opa.total_price_lc) AS total_price_lc ,
+          SUM(opa.total_price_eur) AS total_price_eur ,
+    FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_product_level` AS opa
+    GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14
+
+    UNION DISTINCT
+
+     SELECT opa.period_seg,
+          CAST(report_period as string) as date_string,
+          opa.report_period,
+          opa.global_entity_id,
+          opa.country_name,
+          opa.city_group,
+          opa.category_group_global,
+          opa.is_key_account,
+          opa.store_type_group,
+          "Others" AS product_company,
+          opa.product_company_market,
+          opa.product_subtype,
+          opa.is_option,
+          opa.is_upsell,
+          0 AS orders,
+          0 AS quantity,
+          0 AS total_price_lc ,
+          0 AS total_price_eur ,
+    FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_product_level` AS opa
+    ),
+
+    market_share_row AS (
+    SELECT ROW_NUMBER() OVER() AS row,*
+    FROM market_share),
+
+    filter_relevant_category AS (
+    SELECT DISTINCT
+          global_entity_id,
+          city_group,
+          product_company,
+          product_company_market
+    FROM market_share_row)
+
+    SELECT market_share_row.*,filter_relevant_category.product_company AS product_company_filter
+    FROM market_share_row
+    INNER JOIN filter_relevant_category USING (global_entity_id,city_group,product_company_market)
       ;;
+
+    datagroup_trigger: central_dwh_orders
+    partition_keys: ["report_period"]
+    cluster_keys: ["global_entity_id","product_company"]
+  }
+
+  dimension: unique_key {
+    hidden: yes
+    primary_key: yes
+    type: string
+    sql: ${TABLE}.row
+      ;;
+  }
+
+
+  filter: company_selection {
+    suggest_dimension: product_company
+  }
+
+  dimension: company_comparitor {
+    order_by_field: company_comparitor_order
+    type: string
+    sql:
+    CASE
+      WHEN {% condition company_selection %} ${product_company} {% endcondition %}
+        THEN ${product_company}
+      ELSE 'Others'
+    END ;;
+  }
+
+
+  dimension: company_comparitor_order {
+    type: number
+    sql:
+    CASE
+      WHEN ${company_comparitor} = "Others" THEN 10
+      ELSE 1
+    END ;;
   }
 
 
@@ -155,37 +229,6 @@ view: product_level_2 {
     sql: ${TABLE}.is_key_account ;;
   }
 
-  dimension: order_id {
-    primary_key: yes
-    hidden: yes
-    label: "Order ID"
-    type: string
-    description: "Backend id used to identify the order, which is used also by other services, like Hurrier, Salesforce, etc."
-    sql: ${TABLE}.order_id ;;
-  }
-
-  dimension: vendor_id {
-    hidden: yes
-    label: "Vendor ID"
-    type: string
-    description: "Identifier for the vendor on the platform."
-    sql: ${TABLE}.vendor_id ;;
-  }
-
-  dimension: unique_vendor_id {
-    type: string
-    hidden: yes
-    sql: ${global_entity_id} || '--' || ${vendor_id};;
-  }
-
-  dimension: customer_id {
-    hidden: yes
-    label: "Analytical Customer ID"
-    type: string
-    description: "Analytical Customer ID (ACID). Unique identifier for actual, analytically-recognised and grouped customers. May include more than one customer_id or customer_account_id"
-    sql: ${TABLE}.customer_id ;;
-  }
-
   dimension: store_type {
     group_label: "Business Line"
     type: string
@@ -250,11 +293,14 @@ view: product_level_2 {
   dimension: product_company {
     group_label: "Product"
     type: string
-    sql: CASE WHEN ${TABLE}.product_company = 'Coca-Cola Company' THEN 'Coca Cola'
-         WHEN ${TABLE}.product_company = 'PepsiCo' THEN 'Pepsico'
-          ELSE ${TABLE}.product_company END;;
+    sql: ${TABLE}.product_company;;
   }
 
+  dimension: product_company_filter {
+    group_label: "Product"
+    type: string
+    sql: ${TABLE}.product_company_filter;;
+  }
 
   dimension: product_subtype {
     group_label: "Product"
@@ -292,18 +338,12 @@ view: product_level_2 {
     sql: ${TABLE}.category_group_global;;
   }
 
-  measure: total_customers {
-    label: "Distinct Customers"
-    description: "Distinct count of analytical_customer_id. NOTE: this can be very slow to calculate with many dimensions over long periods of time."
-    type: count_distinct
-    sql: ${customer_id} ;;
-    value_format_name: decimal_0
-  }
 
   measure: total_vendors {
     label: "Number of Total Vendors"
     description: "Number of unique vendor ids with a successful order"
-    type: sum
+    type: sum_distinct
+    sql_distinct_key: ${unique_key} ;;
     sql: ${TABLE}.restaurants ;;
     value_format_name: decimal_0
   }
@@ -311,7 +351,8 @@ view: product_level_2 {
   measure: total_quantity {
     description: "Only Successful Orders"
     label: "Total Volume"
-    type:  sum
+    type: sum_distinct
+    sql_distinct_key: ${unique_key} ;;
     sql: ${TABLE}.quantity ;;
     value_format_name: decimal_0
   }
@@ -319,14 +360,16 @@ view: product_level_2 {
   measure: total_order {
     description: "Only Successful Orders"
     label: "Successful Orders"
-    type:  sum
+    type: sum_distinct
+    sql_distinct_key: ${unique_key} ;;
     sql: ${TABLE}.orders ;;
     value_format_name: decimal_0
   }
 
   measure: total_price {
     label: "Total Price "
-    type: sum
+    type: sum_distinct
+    sql_distinct_key: ${unique_key} ;;
     sql:
       CASE
       WHEN {% parameter currency_picker %} = 'eur'
@@ -339,7 +382,8 @@ view: product_level_2 {
   measure: total_cat_quantity {
     description: "Only Successful Orders"
     label: "Total Category Volume"
-    type:  sum
+    type: sum_distinct
+    sql_distinct_key: ${unique_key} ;;
     sql: CASE WHEN ${product_company} IS NOT NULL THEN ${TABLE}.quantity ELSE NULL END ;;
     value_format_name: decimal_0
   }
@@ -347,7 +391,8 @@ view: product_level_2 {
 
   measure: total_cat_price {
     label: "Total Category Price "
-    type: sum
+    type: sum_distinct
+    sql_distinct_key: ${unique_key} ;;
     sql:
       CASE
       WHEN ${product_company} IS NOT NULL

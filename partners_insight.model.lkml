@@ -3,7 +3,7 @@ connection: "data_hub"
 include: "/**/*.view.lkml"  # include all views in the views/ folder in this project
 
 datagroup: central_dwh_orders {
-  sql_trigger: SELECT COUNT(*) FROM `dhh-ncr-stg.dev_sales_revenue.partnerships_order_level` WHERE report_period >= DATE_SUB(CURRENT_DATE(), INTERVAL 2 DAY) ;;
+  sql_trigger: SELECT COUNT(*) FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_product_level` WHERE report_period >= DATE_SUB(CURRENT_DATE(), INTERVAL 2 DAY) ;;
   max_cache_age: "24 hours"
 }
 
@@ -12,6 +12,7 @@ explore: product_level {
     filters: [product_level.date_granularity: "Monthly"]
     unless: [date_granularity]
   }
+
   view_label: "Product"
   label: "Product"
   persist_with: central_dwh_orders
@@ -37,11 +38,11 @@ explore: product_level_2 {
     filters: [product_level_2.date_granularity: "Monthly"]
     unless: [date_granularity]
   }
+
   view_label: "Product 2"
   always_filter: {
     filters: [product_level_2.product_company_market: "-NULL"]
   }
-  label: "Product 2"
   persist_with: central_dwh_orders
 
   access_filter: {
@@ -52,6 +53,20 @@ explore: product_level_2 {
   access_filter: {
     field: store_type
     user_attribute: shoptype
+  }
+
+  access_filter: {
+    field: product_company_filter
+    user_attribute: product_cpg
+  }
+
+  join: top_50_companies {
+    view_label: "Top 50 Companies"
+    sql_on: ${top_50_companies.product_company} = ${product_level_2.product_company}
+      ;;
+
+    type: inner
+    relationship: many_to_one
   }
 }
 

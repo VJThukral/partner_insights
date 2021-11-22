@@ -245,8 +245,8 @@ label: "product_level"
     group_label: "Product"
     type: string
     sql: CASE WHEN ${TABLE}.product_company = 'Coca-Cola Company' THEN 'Coca Cola'
-         WHEN ${TABLE}.product_company = 'PepsiCo' THEN 'Pepsico'
-          ELSE ${TABLE}.product_company END;;
+      WHEN ${TABLE}.product_company = 'PepsiCo' THEN 'Pepsico'
+      ELSE ${TABLE}.product_company END;;
   }
 
 
