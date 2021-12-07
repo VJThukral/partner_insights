@@ -187,3 +187,5 @@ explore: orders_hour_weekday {
     user_attribute: global_entity_id
   }
 }
+
+explore: coke_aut {}
