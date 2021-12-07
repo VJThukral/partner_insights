@@ -28,7 +28,7 @@ view: coke_aut {
             WHERE opa.period_seg = "Daily"
             AND product_company = "Coca Cola"
             AND global_entity_id = "MJM_AT"
-            AND report_period  BETWEEN DATETIME(DATE_SUB(DATE_TRUNC(CURRENT_DATE, MONTH), INTERVAL 2 MONTH)) AND DATETIME(CURRENT_DATE())
+            AND report_period  BETWEEN DATETIME(DATE_SUB(DATE_TRUNC(CURRENT_DATE, MONTH), INTERVAL 1 MONTH)) AND DATETIME(CURRENT_DATE())
         ;;
       datagroup_trigger: central_dwh_orders
       partition_keys: ["report_period"]
@@ -270,9 +270,7 @@ view: coke_aut {
     dimension: product_size_numeral {
       group_label: "Product"
       type: number
-      sql:CASE WHEN ${TABLE}.product_size_numeral = 0 THEN NULL
-            WHEN ${TABLE}.quantity > 50 THEN ${TABLE}.product_size_numeral
-            ELSE NULL END;;
+      sql: ${TABLE}.product_size_numeral;;
     }
 
     dimension: product_size {
@@ -282,7 +280,7 @@ view: coke_aut {
       sql: CASE WHEN ${product_size_numeral} IS NOT NULL
             AND ${TABLE}.product_size_unit = 'ml'
             THEN CONCAT(${product_size_numeral}," ",${TABLE}.product_size_unit)
-            ELSE 'Other'
+            ELSE NULL
             END;;
     }
 
