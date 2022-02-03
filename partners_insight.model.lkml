@@ -7,6 +7,14 @@ datagroup: central_dwh_orders {
   max_cache_age: "24 hours"
 }
 
+datagroup: coke_aut {
+  sql_trigger: SELECT DISTINCT EXTRACT(MONTH FROM placed_at_local)
+                FROM `fulfillment-dwh-production.curated_data_shared_central_dwh.orders`
+                WHERE placed_at_local >= DATE_SUB(CURRENT_DATE(), INTERVAL 2 DAY)
+                AND global_entity_id = 'MJM_AT' ;;
+  max_cache_age: "24 hours"
+}
+
 explore: product_level {
   conditionally_filter: {
     filters: [product_level.date_granularity: "Monthly"]

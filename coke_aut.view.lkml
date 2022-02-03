@@ -94,7 +94,7 @@ view: coke_aut {
             ON  opa.global_entity_id = dim_r.global_entity_id
             AND opa.vendor_id = dim_r.vendor_id
         ;;
-      datagroup_trigger: central_dwh_orders
+      datagroup_trigger: coke_aut
       partition_keys: ["report_day"]
       cluster_keys: ["global_entity_id","product_company"]
     }
