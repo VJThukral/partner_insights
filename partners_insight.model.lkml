@@ -8,10 +8,7 @@ datagroup: central_dwh_orders {
 }
 
 datagroup: coke_aut {
-  sql_trigger: SELECT DISTINCT EXTRACT(MONTH FROM placed_at_local)
-                FROM `fulfillment-dwh-production.curated_data_shared_central_dwh.orders`
-                WHERE placed_at_local >= DATE_SUB(CURRENT_DATE(), INTERVAL 2 DAY)
-                AND global_entity_id = 'MJM_AT' ;;
+  sql_trigger: SELECT DATE_TRUNC(DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY),MONTH) ;; #Refresh on the 2nd of each month
   max_cache_age: "24 hours"
 }
 
