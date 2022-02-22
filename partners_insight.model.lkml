@@ -3,7 +3,7 @@ connection: "data_hub"
 include: "/**/*.view.lkml"  # include all views in the views/ folder in this project
 
 datagroup: central_dwh_orders {
-  sql_trigger: SELECT COUNT(*) FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_product_level`;;
+  sql_trigger: SELECT COUNT(*) FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_product_level` ;;
   max_cache_age: "24 hours"
 }
 
