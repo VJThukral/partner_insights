@@ -27,7 +27,7 @@ view: product_level_2 {
 
     UNION DISTINCT
 
-     SELECT opa.period_seg,
+    SELECT opa.period_seg,
           CAST(report_period as string) as date_string,
           opa.report_period,
           opa.global_entity_id,
@@ -46,6 +46,56 @@ view: product_level_2 {
           0 AS total_price_lc ,
           0 AS total_price_eur ,
     FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_product_level` AS opa
+
+    UNION DISTINCT
+
+    SELECT opa.period_seg,
+          CAST(report_period as string) as date_string,
+          opa.report_period,
+          'Test' AS global_entity_id,
+          "Test" AS country_name,
+          "Test" AS city_group,
+          "Test" AS category_group_global,
+          opa.is_key_account,
+          opa.store_type_group,
+          "Test" AS product_company,
+          opa.product_company_market,
+          opa.product_subtype,
+          opa.is_option,
+          opa.is_upsell,
+          SUM(opa.orders) AS orders,
+          SUM(opa.quantity) AS quantity,
+          SUM(opa.total_price_lc) AS total_price_lc ,
+          SUM(opa.total_price_eur) AS total_price_eur ,
+    FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_product_level` AS opa
+    WHERE global_entity_id IN ('FP_SG',"MJM_AT","DJ_CZ")
+    AND product_company = 'Coca Cola'
+    GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14
+
+    UNION DISTINCT
+
+    SELECT opa.period_seg,
+          CAST(report_period as string) as date_string,
+          opa.report_period,
+          'Test' AS global_entity_id,
+          "Test" AS country_name,
+          "Test" AS city_group,
+          "Test" AS category_group_global,
+          opa.is_key_account,
+          opa.store_type_group,
+          "Others" AS product_company,
+          opa.product_company_market,
+          opa.product_subtype,
+          opa.is_option,
+          opa.is_upsell,
+          SUM(opa.orders) AS orders,
+          SUM(opa.quantity) AS quantity,
+          SUM(opa.total_price_lc) AS total_price_lc ,
+          SUM(opa.total_price_eur) AS total_price_eur ,
+    FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_product_level` AS opa
+    WHERE global_entity_id IN ('FP_SG',"MJM_AT","DJ_CZ",'FP_MY',"FP_MM")
+    AND product_company = 'Coca Cola'
+    GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14
     ),
 
     market_share_row AS (

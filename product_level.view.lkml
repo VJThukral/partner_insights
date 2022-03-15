@@ -27,7 +27,71 @@ label: "product_level"
     CAST(report_period as string) as date_string
     FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_product_level` AS opa
     WHERE {% condition date_granularity %} opa.period_seg {% endcondition %}
-;;
+
+    UNION ALL
+
+
+    SELECT
+    opa.period_seg,
+    "Test" AS global_entity_id,
+    "Test" AS country_name,
+    opa.report_period,
+    "Test" AS city_group,
+    "Test" AS category_group_global,
+    opa.is_key_account,
+    opa.store_type_group,
+    product_company_market,
+    "Test" AS product_company,
+    "Test" AS product_type,
+    "Test" AS product_subtype,
+    "Test A" AS product_name,
+    1 AS product_size_numeral,
+    "l" AS product_size_unit,
+    opa.is_option,
+    opa.is_upsell,
+    vendors AS restaurants,
+    opa.orders,
+    opa.quantity,
+    opa.total_price_lc,
+    opa.total_price_eur,
+    CAST(report_period as string) as date_string
+    FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_product_level` AS opa
+    WHERE {% condition date_granularity %} opa.period_seg {% endcondition %}
+    AND global_entity_id IN ('FP_SG',"MJM_AT","DJ_CZ")
+    AND product_company IN ('Coca Cola')
+
+    UNION ALL
+
+
+    SELECT
+    opa.period_seg,
+    "Test" AS global_entity_id,
+    "Test" AS country_name,
+    opa.report_period,
+    "Test" AS city_group,
+    "Test" AS category_group_global,
+    opa.is_key_account,
+    opa.store_type_group,
+    product_company_market,
+    "Test" AS product_company,
+    "Test" AS product_type,
+    "Test" AS product_subtype,
+    "Test B" AS product_name,
+    1 AS product_size_numeral,
+    "l" AS product_size_unit,
+    opa.is_option,
+    opa.is_upsell,
+    vendors AS restaurants,
+    opa.orders,
+    opa.quantity,
+    opa.total_price_lc,
+    opa.total_price_eur,
+    CAST(report_period as string) as date_string
+    FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_product_level` AS opa
+    WHERE {% condition date_granularity %} opa.period_seg {% endcondition %}
+    AND global_entity_id IN ('FP_SG',"MJM_AT","DJ_CZ")
+    AND product_company IN ('Redbull','AB Inbev')
+    ;;
     }
 
 

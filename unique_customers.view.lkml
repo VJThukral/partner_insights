@@ -3,7 +3,23 @@ view: unique_customers {
   derived_table: {
     sql: SELECT *,
         CAST(report_period as string) as date_string
-    FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_company_monthly_stats` ;;
+    FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_company_monthly_stats`
+
+    UNION ALL
+
+    SELECT "Test" AS global_entity_id,
+        "Test" AS country_name,
+        "Test" AS city_group,
+        report_period,
+        "Test" AS product_company,
+        vendors,
+        orders,
+        users,
+        CAST(report_period as string) as date_string
+    FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_company_monthly_stats`
+    WHERE global_entity_id IN ('FP_SG',"MJM_AT")
+    AND product_company IN ('Coca Cola')
+    ;;
   }
 
   dimension: report_period_weekday {

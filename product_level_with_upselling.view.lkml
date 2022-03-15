@@ -103,6 +103,123 @@ view: product_level_with_upselling {
             total_price_eur
         FROM fulfillment-dwh-production.rl_sales_revenue.partnerships_company_level
         WHERE {% condition date_granularity %} period_seg {% endcondition %}
+
+        UNION ALL --- ADDING TEST DATA FOR EXPLORING PURPOSE
+
+        SELECT
+            "Test" AS global_entity_id,
+            period_seg,
+            "Test" AS country_name,
+            report_period,
+            "Test" AS city_group,
+            "Test" AS category_group_global,
+            store_type_group,
+            is_key_account,
+            "Test" AS product_company,
+            "Test" AS product_name,
+            CASE WHEN is_upsell IS TRUE THEN 'With Upselling' ELSE 'Without Upselling' END AS Upselling,
+            customers,
+            vendors AS restaurants,
+            orders,
+            quantity,
+            total_price_lc,
+            total_price_eur
+        FROM fulfillment-dwh-production.rl_sales_revenue.partnerships_product_level
+        WHERE global_entity_id IN ('FP_SG',"MJM_AT")
+        AND product_company IN ('Coca Cola')
+        UNION ALL
+        SELECT
+            "Test" AS global_entity_id,
+            period_seg,
+            "Test" AS country_name,
+            report_period,
+            "Test" AS city_group,
+            "Test" AS category_group_global,
+            store_type_group,
+            is_key_account,
+            "Test" AS product_company,
+            "Test" AS product_name,
+            'All' AS Upselling,
+            SUM(customers) AS customers,
+            SUM(vendors) AS restaurants,
+            SUM(orders) AS orders,
+            SUM(quantity) AS quantity,
+            SUM(total_price_lc) AS total_price_lc,
+            SUM(total_price_eur) AS total_price_eur
+        FROM fulfillment-dwh-production.rl_sales_revenue.partnerships_product_level
+        WHERE global_entity_id IN ('FP_SG',"MJM_AT")
+        AND product_company IN ('Coca Cola')
+        GROUP BY 1,2,3,4,5,6,7,8,9,10,11
+        UNION ALL
+        SELECT
+            "Test" AS global_entity_id,
+            period_seg,
+            "Test" AS country_name,
+            report_period,
+            "Test" AS city_group,
+            "Test" AS category_group_global,
+            store_type_group,
+            is_key_account,
+            "Test" AS product_company,
+            "All Brands" AS product_name,
+            'With Upselling' AS Upselling,
+            customers,
+            vendors AS restaurants,
+            orders,
+            quantity,
+            total_price_lc,
+            total_price_eur
+        FROM fulfillment-dwh-production.rl_sales_revenue.partnerships_product_level
+        WHERE is_upsell IS TRUE
+        AND global_entity_id IN ('FP_SG',"MJM_AT")
+        AND product_company IN ('Coca Cola')
+        UNION ALL
+            SELECT
+            "Test" AS global_entity_id,
+            period_seg,
+            "Test" AS country_name,
+            report_period,
+            "Test" AS city_group,
+            "Test" AS category_group_global,
+            store_type_group,
+            is_key_account,
+            "Test" AS product_company,
+            "All Brands" AS product_name,
+            'Without Upselling' AS Upselling,
+            customers,
+            vendors AS restaurants,
+            orders,
+            quantity,
+            total_price_lc,
+            total_price_eur
+        FROM fulfillment-dwh-production.rl_sales_revenue.partnerships_product_level
+        WHERE is_upsell IS FALSE
+        AND global_entity_id IN ('FP_SG',"MJM_AT")
+        AND product_company IN ('Coca Cola')
+        UNION ALL
+        SELECT
+            "Test" AS global_entity_id,
+            period_seg,
+            "Test" AS country_name,
+            report_period,
+            "Test" AS city_group,
+            "Test" AS category_group_global,
+            store_type_group,
+            is_key_account,
+            "Test" AS product_company,
+            "All Brands" AS product_name,
+            'All' AS Upselling,
+            customers,
+            vendors AS restaurants,
+            orders,
+            quantity,
+            total_price_lc,
+            total_price_eur
+        FROM fulfillment-dwh-production.rl_sales_revenue.partnerships_company_level
+        WHERE {% condition date_granularity %} period_seg {% endcondition %}
+        AND global_entity_id IN ('FP_SG',"MJM_AT")
+        AND product_company IN ('Coca Cola')
+
     ;;
   }
 

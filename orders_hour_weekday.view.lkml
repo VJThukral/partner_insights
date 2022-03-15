@@ -2,7 +2,20 @@ view: orders_hour_weekday {
   label: "orders_hour_weekday"
   derived_table: {
     sql: SELECT *
-    FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_dh_orders_by_hour`;;
+    FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_dh_orders_by_hour`
+
+    UNION ALL
+
+    SELECT 'Test' AS global_entity_id,
+        'Test' AS country_name,
+        'Test' AS city_group,
+        report_period_weekday,
+        report_period_hour,
+        orders,
+    FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_dh_orders_by_hour`
+    WHERE global_entity_id IN ('FP_SG',"MJM_AT","DJ_CZ",'FP_MY',"FP_MM")
+
+    ;;
     }
 
   dimension: report_period_weekday {

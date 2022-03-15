@@ -40,6 +40,51 @@ view: product_level_without_upselling {
             total_price_eur
         FROM fulfillment-dwh-production.rl_sales_revenue.partnerships_company_level
         WHERE {% condition date_granularity %} period_seg {% endcondition %}
+        UNION ALL ---ADDING TEST DATA FOR EXPLORING PURPOSE
+        SELECT
+            "Test" AS global_entity_id,
+            period_seg,
+            "Test" AS country_name,
+            report_period,
+            "Test" AS city_group,
+            "Test" AS category_group_global,
+            store_type_group,
+            is_key_account,
+            "Test" AS product_company,
+            "Test" AS product_name,
+            CAST(report_period as string) as date_string,
+            customers,
+            vendors AS restaurants,
+            orders,
+            quantity,
+            total_price_lc,
+            total_price_eur
+        FROM fulfillment-dwh-production.rl_sales_revenue.partnerships_product_level
+        WHERE global_entity_id IN ('FP_SG',"MJM_AT")
+        AND product_company IN ('Coca Cola')
+        UNION ALL
+        SELECT
+            "Test" AS global_entity_id,
+            period_seg,
+            "Test" AS country_name,
+            report_period,
+            "Test" AS city_group,
+            "Test" AS category_group_global,
+            store_type_group,
+            is_key_account,
+            "Test" AS product_company,
+            "All Brands" AS product_name,
+            CAST(report_period as string) as date_string,
+            customers,
+            vendors AS restaurants,
+            orders,
+            quantity,
+            total_price_lc,
+            total_price_eur
+        FROM fulfillment-dwh-production.rl_sales_revenue.partnerships_company_level
+        WHERE {% condition date_granularity %} period_seg {% endcondition %}
+        AND global_entity_id IN ('FP_SG',"MJM_AT")
+        AND product_company IN ('Coca Cola')
     ;;
     }
 
