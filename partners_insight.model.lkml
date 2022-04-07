@@ -1,4 +1,4 @@
-connection: "data_hub"
+connection: "dhh-ncr-live"
 
 include: "/**/*.view.lkml"  # include all views in the views/ folder in this project
 
