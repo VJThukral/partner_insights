@@ -329,8 +329,8 @@ label: "product_level"
   dimension: product_size_numeral {
     group_label: "Product"
     type: number
-    sql:CASE WHEN ${TABLE}.product_size_numeral = 0 THEN NULL
-            WHEN ${TABLE}.quantity > 50 THEN ${TABLE}.product_size_numeral
+    sql:CASE WHEN ${TABLE}.product_size_numeral = "0" THEN NULL
+            WHEN ${TABLE}.quantity > 10 THEN ${TABLE}.product_size_numeral
             ELSE NULL END;;
   }
 
