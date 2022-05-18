@@ -98,20 +98,16 @@ view: product_level_2 {
     GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14
     ),
 
-    market_share_row AS (
-    SELECT ROW_NUMBER() OVER() AS row,*
-    FROM market_share),
-
     filter_relevant_category AS (
     SELECT DISTINCT
           global_entity_id,
           city_group,
           product_company,
           product_company_market
-    FROM market_share_row)
+    FROM market_share)
 
-    SELECT market_share_row.*,filter_relevant_category.product_company AS product_company_filter
-    FROM market_share_row
+    SELECT market_share.*,filter_relevant_category.product_company AS product_company_filter
+    FROM market_share
     INNER JOIN filter_relevant_category USING (global_entity_id,city_group,product_company_market)
       ;;
 
@@ -124,7 +120,8 @@ view: product_level_2 {
     hidden: yes
     primary_key: yes
     type: string
-    sql: ${TABLE}.row
+    sql: CONCAT(${date_granularity},${order_raw},${global_entity_id},${city},${category_group_global},
+                ${is_key_account},${store_type},${product_company},${product_company_market},${product_subtype},${is_option},${is_upsell})
       ;;
   }
 
