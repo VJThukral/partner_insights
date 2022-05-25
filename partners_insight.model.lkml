@@ -12,6 +12,11 @@ datagroup: coke_aut {
   max_cache_age: "24 hours"
 }
 
+datagroup: talabat_incidence_rate {
+  sql_trigger: SELECT DATE_TRUNC(DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY),WEEK) ;; #Refresh on the 2nd of each month
+  max_cache_age: "24 hours"
+}
+
 explore: product_level {
   conditionally_filter: {
     filters: [product_level.date_granularity: "Monthly"]
@@ -194,3 +199,5 @@ explore: orders_hour_weekday {
 }
 
 explore: coke_aut {}
+
+explore: talabat_incidence_rate {}
