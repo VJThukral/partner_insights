@@ -10,6 +10,7 @@ view: talabat_incidence_rate {
           DATE_TRUNC(opa.report_period,WEEK) as report_period,
           opa.product_company,
           opa.city_group,
+          opa.store_type_group,
           opa.vendor_id
       FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_order_level`        AS opa
       INNER JOIN `fulfillment-dwh-production.curated_data_shared_central_dwh.global_entities` USING (global_entity_id)
@@ -26,6 +27,7 @@ view: talabat_incidence_rate {
           DATE_TRUNC(opa.report_period,MONTH) as report_period,
           opa.product_company,
           opa.city_group,
+          opa.store_type_group,
           opa.vendor_id
       FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_order_level`       AS opa
       INNER JOIN `fulfillment-dwh-production.curated_data_shared_central_dwh.global_entities` USING (global_entity_id)
@@ -64,11 +66,12 @@ view: talabat_incidence_rate {
           report_period,
           city_group,
           product_company,
+          store_type_group,
           COUNT(DISTINCT vendor_id)   as vendors,
           SUM(orders)        as orders
       FROM metadata_level_weekly
       LEFT JOIN vendor_weekly USING (period_seg,global_entity_id,report_period,vendor_id)
-      GROUP BY 1,2,3,4,5,6
+      GROUP BY 1,2,3,4,5,6,7
 
       UNION ALL
 
@@ -79,11 +82,12 @@ view: talabat_incidence_rate {
           report_period,
           city_group,
           product_company,
+          store_type_group,
           COUNT(DISTINCT vendor_id)   as vendors,
           SUM(orders)        as orders
       FROM metadata_level_monthly
       LEFT JOIN vendor_monthly USING (period_seg,global_entity_id,report_period,vendor_id)
-      GROUP BY 1,2,3,4,5,6
+      GROUP BY 1,2,3,4,5,6,7
       ;;
     datagroup_trigger: talabat_incidence_rate
     partition_keys: ["report_period"]
