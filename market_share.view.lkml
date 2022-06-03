@@ -1,8 +1,9 @@
 view: product_level_2 {
-  label: "product_level_2"
+  label: "Market Share"
   derived_table: {
-    sql:WITH market_share AS (
-    SELECT opa.period_seg,
+    sql:WITH base_data AS (
+    SELECT
+          opa.period_seg,
           CAST(report_period as string) as date_string,
           opa.report_period,
           opa.global_entity_id,
@@ -11,21 +12,41 @@ view: product_level_2 {
           opa.category_group_global,
           opa.is_key_account,
           opa.store_type_group,
-          CASE WHEN opa.product_company = 'Coca-Cola Company' THEN 'Coca Cola'
-          WHEN opa.product_company = 'PepsiCo' THEN 'Pepsico'
-          ELSE opa.product_company END AS product_company,
+          opa.product_company,
           opa.product_company_market,
           opa.product_subtype,
           opa.is_option,
           opa.is_upsell,
-          SUM(opa.orders) AS orders,
           SUM(opa.quantity) AS quantity,
           SUM(opa.total_price_lc) AS total_price_lc ,
           SUM(opa.total_price_eur) AS total_price_eur ,
-    FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_product_level` AS opa
+    FROM ${brand_level_split.SQL_TABLE_NAME} AS opa
     GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14
 
-    UNION DISTINCT
+    UNION ALL
+
+    SELECT
+          opa.period_seg,
+          CAST(report_period as string) as date_string,
+          opa.report_period,
+          opa.global_entity_id,
+          opa.country_name,
+          opa.city_group,
+          opa.category_group_global,
+          opa.is_key_account,
+          opa.store_type_group,
+          opa.product_company,
+          opa.product_company_market,
+          opa.product_subtype,
+          opa.is_option,
+          opa.is_upsell,
+          SUM(opa.quantity) AS quantity,
+          SUM(opa.total_price_lc) AS total_price_lc ,
+          SUM(opa.total_price_eur) AS total_price_eur ,
+    FROM ${brand_level_all.SQL_TABLE_NAME} AS opa
+    GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14
+
+    UNION ALL ---This query is to have "Others" to joinable with Country Data for Incidence Rate Calculation
 
     SELECT opa.period_seg,
           CAST(report_period as string) as date_string,
@@ -41,13 +62,32 @@ view: product_level_2 {
           opa.product_subtype,
           opa.is_option,
           opa.is_upsell,
-          0 AS orders,
           0 AS quantity,
           0 AS total_price_lc ,
           0 AS total_price_eur ,
-    FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_product_level` AS opa
+    FROM ${brand_level.SQL_TABLE_NAME} AS opa
+    ),
 
-    UNION DISTINCT
+    filter_relevant_category AS (
+    SELECT DISTINCT
+          global_entity_id,
+          city_group,
+          product_company,
+          product_company_market
+    FROM base_data
+    ),
+
+    market_share AS (
+    SELECT base_data.*,filter_relevant_category.product_company AS product_company_filter
+    FROM base_data
+    INNER JOIN filter_relevant_category USING (global_entity_id,city_group,product_company_market)
+    )
+
+    --This is for dummy data purpose
+    SELECT market_share.*
+    FROM market_share
+
+    UNION ALL
 
     SELECT opa.period_seg,
           CAST(report_period as string) as date_string,
@@ -63,16 +103,17 @@ view: product_level_2 {
           opa.product_subtype,
           opa.is_option,
           opa.is_upsell,
-          SUM(opa.orders) AS orders,
           SUM(opa.quantity) AS quantity,
           SUM(opa.total_price_lc) AS total_price_lc ,
           SUM(opa.total_price_eur) AS total_price_eur ,
-    FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_product_level` AS opa
+          opa.product_company_filter
+    FROM market_share AS opa
     WHERE global_entity_id IN ('FP_SG',"MJM_AT","DJ_CZ")
+    AND product_company_filter = 'Coca Cola'
     AND product_company = 'Coca Cola'
-    GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14
+    GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,18
 
-    UNION DISTINCT
+    UNION ALL
 
     SELECT opa.period_seg,
           CAST(report_period as string) as date_string,
@@ -88,32 +129,21 @@ view: product_level_2 {
           opa.product_subtype,
           opa.is_option,
           opa.is_upsell,
-          SUM(opa.orders) AS orders,
           SUM(opa.quantity) AS quantity,
           SUM(opa.total_price_lc) AS total_price_lc ,
           SUM(opa.total_price_eur) AS total_price_eur ,
-    FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_product_level` AS opa
+          opa.product_company_filter
+    FROM market_share AS opa
     WHERE global_entity_id IN ('FP_SG',"MJM_AT","DJ_CZ",'FP_MY',"FP_MM")
-    AND product_company = 'Coca Cola'
-    GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14
-    ),
+    AND product_company_filter = 'Coca Cola'
+    AND product_company != 'Coca Cola'
+    GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,18
 
-    filter_relevant_category AS (
-    SELECT DISTINCT
-          global_entity_id,
-          city_group,
-          product_company,
-          product_company_market
-    FROM market_share)
-
-    SELECT market_share.*,filter_relevant_category.product_company AS product_company_filter
-    FROM market_share
-    INNER JOIN filter_relevant_category USING (global_entity_id,city_group,product_company_market)
       ;;
 
     datagroup_trigger: central_dwh_orders
     partition_keys: ["report_period"]
-    cluster_keys: ["global_entity_id","product_company"]
+    cluster_keys: ["period_seg","global_entity_id","product_company"]
   }
 
   dimension: unique_key {
@@ -121,7 +151,7 @@ view: product_level_2 {
     primary_key: yes
     type: string
     sql: CONCAT(${date_granularity},${order_raw},${global_entity_id},${city},${category_group_global},
-                ${is_key_account},${store_type},${product_company},${product_company_market},${product_subtype},${is_option},${is_upsell})
+                ${is_key_account},${store_type},${product_company},${product_company_market},${product_subtype},${product_type},${upselling})
       ;;
   }
 
@@ -282,32 +312,14 @@ view: product_level_2 {
     sql: ${TABLE}.store_type_group ;;
   }
 
-  dimension: is_option{
-    group_label: "Business Line"
-    type: yesno
-    sql: ${TABLE}.is_option ;;
-  }
-
-  dimension: is_upsell{
-    group_label: "Business Line"
-    type: yesno
+  dimension: upselling {
+    type: string
     sql: ${TABLE}.is_upsell ;;
   }
 
   dimension: product_type {
-    group_label: "Product"
     type: string
-    sql: CASE WHEN ${is_option} IS TRUE THEN 'Option'
-              ELSE 'Product'
-              END;;
-  }
-
-  dimension: upselling {
-    group_label: "Product"
-    type: string
-    sql: CASE WHEN ${is_upsell} IS TRUE THEN 'With Upselling'
-              ELSE 'Without Upselling'
-              END;;
+    sql:${TABLE}.is_option;;
   }
 
   filter: brand_select {
@@ -404,14 +416,14 @@ view: product_level_2 {
     value_format_name: decimal_0
   }
 
-  measure: total_order {
-    description: "Only Successful Orders"
-    label: "Successful Orders"
-    type: sum_distinct
-    sql_distinct_key: ${unique_key} ;;
-    sql: ${TABLE}.orders ;;
-    value_format_name: decimal_0
-  }
+  # measure: total_order {
+  #   description: "Only Successful Orders"
+  #   label: "Successful Orders"
+  #   type: sum_distinct
+  #   sql_distinct_key: ${unique_key} ;;
+  #   sql: ${TABLE}.orders ;;
+  #   value_format_name: decimal_0
+  # }
 
   measure: total_price {
     label: "Total Price "

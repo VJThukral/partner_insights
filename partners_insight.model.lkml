@@ -23,8 +23,8 @@ explore: product_level {
     unless: [date_granularity]
   }
 
-  view_label: "Product"
-  label: "Product"
+  label: "Partnership - Product Level"
+  view_label: "Product Level"
   persist_with: central_dwh_orders
 
   access_filter: {
@@ -44,15 +44,12 @@ explore: product_level {
 }
 
 explore: product_level_2 {
-  conditionally_filter: {
-    filters: [product_level_2.date_granularity: "Monthly"]
-    unless: [date_granularity]
+  always_filter: {
+    filters: [product_level_2.product_company_market: "-NULL",product_level_2.date_granularity: "Monthly",product_level_2.product_type: "All",product_level_2.upselling: "All"]
   }
 
-  view_label: "Product 2"
-  always_filter: {
-    filters: [product_level_2.product_company_market: "-NULL"]
-  }
+  label: "Partnership - Market Share"
+  view_label: "Market Share"
   persist_with: central_dwh_orders
 
   access_filter: {
@@ -82,8 +79,8 @@ explore: product_level_2 {
 
 
 explore: top_restaurants {
+  label: "Partnership - Top Restaurants"
   view_label: "Top Restaurants"
-  label: "Top Restaurants"
   persist_with: central_dwh_orders
 
   access_filter: {
@@ -103,8 +100,8 @@ explore: meta_data {
     filters: [meta_data.date_granularity: "Monthly"]
     unless: [date_granularity]
   }
-  view_label: "MetaData"
-  label: "MetaData"
+  label: "Partnership - Country Data"
+  view_label: "Country Data"
   persist_with: central_dwh_orders
 
   access_filter: {
@@ -119,38 +116,37 @@ explore: meta_data {
 
 }
 
-  explore: product_level_without_upselling {
-    conditionally_filter: {
-      filters: [product_level_without_upselling.date_granularity: "Monthly"]
-      unless: [date_granularity]
-    }
-    view_label: "Product Level without Upselling"
-    label: "Product Level without Upselling"
-    persist_with: central_dwh_orders
+#   explore: product_level_without_upselling {
+#     conditionally_filter: {
+#       filters: [product_level_without_upselling.date_granularity: "Monthly"]
+#       unless: [date_granularity]
+#     }
+#     view_label: "Partnership - Brand Level"
+#     label: "Brand Level"
+#     persist_with: central_dwh_orders
 
-    access_filter: {
-      field: store_type
-      user_attribute: shoptype
-    }
+#     access_filter: {
+#       field: store_type
+#       user_attribute: shoptype
+#     }
 
-    access_filter: {
-      field: product_company
-      user_attribute: product_cpg
-    }
+#     access_filter: {
+#       field: product_company
+#       user_attribute: product_cpg
+#     }
 
-    access_filter: {
-      field: global_entity_id
-      user_attribute: global_entity_id
-    }
-}
+#     access_filter: {
+#       field: global_entity_id
+#       user_attribute: global_entity_id
+#     }
+# }
 
-explore: product_level_with_upselling {
-  conditionally_filter: {
-    filters: [product_level_with_upselling.date_granularity: "Monthly"]
-    unless: [date_granularity]
+explore: brand_level {
+  always_filter: {
+    filters: [brand_level.date_granularity: "Monthly",brand_level.product_name: "All Brands",brand_level.product_type: "All",brand_level.upselling: "All"]
   }
-  view_label: "Product Level with Upselling"
-  label: "Product Level with Upselling"
+  label: "Partnership - Brand Level"
+  view_label: "Brand Level"
   persist_with: central_dwh_orders
 
   access_filter: {
@@ -172,7 +168,7 @@ explore: product_level_with_upselling {
 
   explore: unique_customers {
     view_label: "Unique Customers"
-    label: "Unique Customers"
+    label: "Partnership - Unique Customers"
     persist_with: central_dwh_orders
 
     access_filter: {
@@ -188,7 +184,7 @@ explore: product_level_with_upselling {
 
 explore: orders_hour_weekday {
   view_label: "Orders Hour Weekday"
-  label: "Orders Hour Weekday"
+  label: "Partnership - Orders Hour Weekday"
   persist_with: central_dwh_orders
 
 
@@ -198,6 +194,10 @@ explore: orders_hour_weekday {
   }
 }
 
-explore: coke_aut {}
+explore: coke_aut {
+  view_label: "Parnership Adhoc - Coke Austria"
+}
 
-explore: talabat_incidence_rate {}
+explore: talabat_incidence_rate {
+  view_label: "Parnership Adhoc - Talabat Incidence Rate"
+}
