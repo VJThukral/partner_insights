@@ -204,7 +204,6 @@ view: brand_level {
 
 
   dimension: global_entity_id {
-    hidden: yes
     type: string
     group_label: "Global Entity"
     description: "GEID, identifier for the sub_entity/brand. Example: 'CD_CO', 'PY_AR', etc."
@@ -237,14 +236,18 @@ view: brand_level {
     sql: ${TABLE}.is_key_account ;;
   }
 
-
-
   dimension: product_company {
     group_label: "Product"
     type: string
     sql: CASE WHEN ${TABLE}.product_company = 'Coca-Cola Company' THEN 'Coca Cola'
          WHEN ${TABLE}.product_company = 'PepsiCo' THEN 'Pepsico'
           ELSE ${TABLE}.product_company END;;
+  }
+
+  dimension: product_subtype {
+    group_label: "Product"
+    type: string
+    sql: ${TABLE}.product_subtype ;;
   }
 
   dimension: product_name {
@@ -255,20 +258,25 @@ view: brand_level {
   }
 
   filter: brand_selection {
-    suggest_dimension: product_name
+    suggest_dimension: brand_level.product_name
+  }
 
+  filter: product_subtype_filter {
+    suggest_dimension: brand_level.product_subtype
   }
 
   dimension: brand_comparitor {
     type: string
     sql:
     CASE
+    WHEN {% condition brand_selection %} "All Brands" {% endcondition %}
+    AND {% condition product_subtype_filter %} "All Categories" {% endcondition %}
+        THEN ${product_name}
       WHEN {% condition brand_selection %} ${product_name} {% endcondition %}
         THEN ${product_name}
       ELSE "Others"
     END ;;
   }
-
 
   dimension: store_type {
     type: string
@@ -287,14 +295,7 @@ view: brand_level {
     label: "Number of Total Vendors"
     description: "Number of unique vendor ids with a successful order"
     type: sum
-    sql: ${TABLE}.restaurants ;;
-  }
-
-  measure: total_quantity {
-    description: "Only Successful Orders"
-    label: "Total Volume"
-    type:  sum
-    sql: ${TABLE}.quantity ;;
+    sql: ${TABLE}.vendors ;;
   }
 
   measure: total_order {
@@ -304,24 +305,13 @@ view: brand_level {
     sql: ${TABLE}.orders ;;
   }
 
-  measure: total_price {
-    label: "Total Price "
-    type: sum
-    sql:
-      CASE
-      WHEN {% parameter currency_picker %} = 'eur'
-        THEN ${TABLE}.total_price_eur
-      ELSE ${TABLE}.total_price_lc
-    END ;;
-  }
-
   measure: total_cat_quantity {
     description: "Only Successful Orders"
     label: "Total Category Volume"
     type:  sum
     sql: CASE WHEN ${product_company} IS NOT NULL THEN ${TABLE}.quantity ELSE NULL END ;;
+    value_format_name: decimal_0
   }
-
 
   measure: total_cat_price {
     label: "Total Category Price "
@@ -329,9 +319,14 @@ view: brand_level {
     sql:
       CASE
       WHEN ${product_company} IS NOT NULL
+        AND {% parameter currency_picker %} = 'eur'
         THEN ${TABLE}.total_price_eur
+      WHEN ${product_company} IS NOT NULL
+        AND {% parameter currency_picker %} = 'lc'
+        THEN ${TABLE}.total_price_lc
       ELSE NULL
     END ;;
+    value_format_name: decimal_2
   }
 
 

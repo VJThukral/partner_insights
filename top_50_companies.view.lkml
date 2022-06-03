@@ -2,10 +2,10 @@ view: top_50_companies {
   derived_table: {
     explore_source: product_level_2 {
       column: product_company {}
-      column: total_price {}
-      derived_column: rank { sql: rank() over (order by total_price desc);;}
+      column: total_cat_price {}
+      derived_column: rank { sql: rank() over (order by total_cat_price desc);;}
       bind_all_filters: yes
-      sort: { field: Gross_sales desc: yes}
+      sort: { field: total_cat_price desc: yes}
     }
   }
   dimension: product_company {}

@@ -18,9 +18,8 @@ datagroup: talabat_incidence_rate {
 }
 
 explore: product_level {
-  conditionally_filter: {
-    filters: [product_level.date_granularity: "Monthly"]
-    unless: [date_granularity]
+  always_filter: {
+    filters: [product_level.date_granularity: "Monthly",product_level.product_company: "-Test"]
   }
 
   label: "Partnership - Product Level"
@@ -45,7 +44,8 @@ explore: product_level {
 
 explore: product_level_2 {
   always_filter: {
-    filters: [product_level_2.product_company_market: "-NULL",product_level_2.date_granularity: "Monthly",product_level_2.product_type: "All",product_level_2.upselling: "All"]
+    filters: [product_level_2.product_company_market: "-NULL",
+      product_level_2.product_type: "All",product_level_2.upselling: "All",product_level_2.product_company_filter: "-Test"]
   }
 
   label: "Partnership - Market Share"

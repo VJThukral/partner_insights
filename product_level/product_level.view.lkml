@@ -284,10 +284,11 @@ label: "product_level"
               END;;
   }
 
+
   filter: brand_selection {
     suggest_dimension: product_name
-
   }
+
 
   dimension: brand_comparitor {
     type: string
@@ -367,32 +368,12 @@ label: "product_level"
     value_format_name: decimal_0
   }
 
-  measure: total_quantity {
-    description: "Only Successful Orders"
-    label: "Total Volume"
-    type:  sum
-    sql: ${TABLE}.quantity ;;
-    value_format_name: decimal_0
-  }
-
   measure: total_order {
     description: "Only Successful Orders"
     label: "Successful Orders"
     type:  sum
     sql: ${TABLE}.orders ;;
     value_format_name: decimal_0
-  }
-
-  measure: total_price {
-    label: "Total Price "
-    type: sum
-    sql:
-      CASE
-      WHEN {% parameter currency_picker %} = 'eur'
-        THEN ${TABLE}.total_price_eur
-      ELSE ${TABLE}.total_price_lc
-    END ;;
-    value_format_name: decimal_2
   }
 
   measure: total_cat_quantity {
@@ -410,7 +391,11 @@ label: "product_level"
     sql:
       CASE
       WHEN ${product_company} IS NOT NULL
+        AND {% parameter currency_picker %} = 'eur'
         THEN ${TABLE}.total_price_eur
+      WHEN ${product_company} IS NOT NULL
+        AND {% parameter currency_picker %} = 'lc'
+        THEN ${TABLE}.total_price_lc
       ELSE NULL
     END ;;
     value_format_name: decimal_2
