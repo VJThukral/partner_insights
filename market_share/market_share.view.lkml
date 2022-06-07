@@ -178,12 +178,12 @@ view: product_level_2 {
 
   dimension: upselling {
     type: string
-    sql: ${TABLE}.is_upsell ;;
+    sql: ${TABLE}.product_upsell ;;
   }
 
   dimension: product_type {
     type: string
-    sql:${TABLE}.is_option;;
+    sql:${TABLE}.product_option;;
   }
 
   filter: brand_select {

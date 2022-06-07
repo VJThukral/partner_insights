@@ -14,12 +14,12 @@ view: market_share_monthly {
                 opa.product_company,
                 opa.product_company_market,
                 opa.product_subtype,
-                opa.is_option,
-                opa.is_upsell,
+                opa.product_option,
+                opa.product_upsell,
                 SUM(opa.quantity) AS quantity,
                 SUM(opa.total_price_lc) AS total_price_lc ,
                 SUM(opa.total_price_eur) AS total_price_eur ,
-          FROM ${brand_level_split.SQL_TABLE_NAME} AS opa
+          FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_brand_level` AS opa
           WHERE opa.period_seg = "Monthly"
           GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14
 
@@ -38,12 +38,12 @@ view: market_share_monthly {
       opa.product_company,
       opa.product_company_market,
       opa.product_subtype,
-      opa.is_option,
-      opa.is_upsell,
+      opa.product_option,
+      opa.product_upsell,
       SUM(opa.quantity) AS quantity,
       SUM(opa.total_price_lc) AS total_price_lc ,
       SUM(opa.total_price_eur) AS total_price_eur ,
-      FROM ${brand_level_all.SQL_TABLE_NAME} AS opa
+      FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_brand_level_all` AS opa
       WHERE opa.period_seg = "Monthly"
       GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14
 
@@ -61,8 +61,8 @@ view: market_share_monthly {
       "Others" AS product_company,
       opa.product_company_market,
       opa.product_subtype,
-      opa.is_option,
-      opa.is_upsell,
+      opa.product_option,
+      opa.product_upsell,
       0 AS quantity,
       0 AS total_price_lc ,
       0 AS total_price_eur ,
@@ -104,8 +104,8 @@ view: market_share_monthly {
       "Test" AS product_company,
       opa.product_company_market,
       opa.product_subtype,
-      opa.is_option,
-      opa.is_upsell,
+      opa.product_option,
+      opa.product_upsell,
       SUM(opa.quantity) AS quantity,
       SUM(opa.total_price_lc) AS total_price_lc ,
       SUM(opa.total_price_eur) AS total_price_eur ,
@@ -130,8 +130,8 @@ view: market_share_monthly {
       "Others" AS product_company,
       opa.product_company_market,
       opa.product_subtype,
-      opa.is_option,
-      opa.is_upsell,
+      opa.product_option,
+      opa.product_upsell,
       SUM(opa.quantity) AS quantity,
       SUM(opa.total_price_lc) AS total_price_lc ,
       SUM(opa.total_price_eur) AS total_price_eur ,

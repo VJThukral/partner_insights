@@ -1,12 +1,12 @@
 view: brand_level {
   derived_table: {
     sql:SELECT *
-        FROM ${brand_level_split.SQL_TABLE_NAME}
+        FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_brand_level`
 
         UNION ALL
 
         SELECT *
-        FROM ${brand_level_all.SQL_TABLE_NAME}
+        FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_brand_level_all`
 
         UNION ALL
 
@@ -24,8 +24,8 @@ view: brand_level {
             product_company_market AS product_type,
             "All Categories" AS product_subtype,
             "All Brands" AS product_name,
-            "All" AS is_option,
-            'All' AS is_upsell,
+            "All" AS product_option,
+            'All' AS product_upsell,
             customers,
             vendors AS restaurants,
             orders,
@@ -50,8 +50,8 @@ view: brand_level {
             "Test" AS product_type,
             "Test" AS product_subtype,
             "Test" AS product_name,
-            CASE WHEN is_option IS TRUE THEN "Option" ELSE "Product" END AS is_option,
-            CASE WHEN is_upsell IS TRUE THEN 'With Upselling' ELSE 'Without Upselling' END AS is_upsell,
+            CASE WHEN is_option IS TRUE THEN "Option" ELSE "Product" END AS product_option,
+            CASE WHEN is_upsell IS TRUE THEN 'With Upselling' ELSE 'Without Upselling' END AS product_upsell,
             customers,
             vendors AS restaurants,
             orders,
@@ -78,8 +78,8 @@ view: brand_level {
             "Test" AS product_type,
             "Test" AS product_subtype,
             "Test" AS product_name,
-            "All" AS is_option,
-            'All' AS is_upsell,
+            "All" AS product_option,
+            'All' AS product_upsell,
             SUM(customers) AS customers,
             SUM(vendors) AS restaurants,
             SUM(orders) AS orders,
@@ -107,8 +107,8 @@ view: brand_level {
             "Test" AS product_type,
             "Test" AS product_subtype,
             "All Brands" AS product_name,
-            CASE WHEN is_option IS TRUE THEN "Option" ELSE "Product" END AS is_option,
-            CASE WHEN is_upsell IS TRUE THEN 'With Upselling' ELSE 'Without Upselling' END AS upselling,
+            CASE WHEN is_option IS TRUE THEN "Option" ELSE "Product" END AS product_option,
+            CASE WHEN is_upsell IS TRUE THEN 'With Upselling' ELSE 'Without Upselling' END AS product_upsell,
             customers,
             vendors AS restaurants,
             orders,
@@ -141,12 +141,12 @@ view: brand_level {
 
   dimension: upselling {
     type: string
-    sql: ${TABLE}.is_upsell ;;
+    sql: ${TABLE}.product_upsell ;;
   }
 
   dimension: product_type {
     type: string
-    sql:${TABLE}.is_option;;
+    sql:${TABLE}.product_option;;
   }
 
   dimension: date {
