@@ -127,8 +127,6 @@ view: brand_level {
   }
 
 
-
-
   dimension: date_granularity {
     type: string
     sql: ${TABLE}.period_seg ;;
