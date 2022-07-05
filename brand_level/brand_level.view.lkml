@@ -269,7 +269,7 @@ view: brand_level {
     CASE
     WHEN {% condition brand_selection %} "All Brands" {% endcondition %}
     AND {% condition product_subtype_filter %} "All Categories" {% endcondition %}
-        THEN ${product_name}
+        THEN ${product_name} ---return each brand values
       WHEN {% condition brand_selection %} ${product_name} {% endcondition %}
         THEN ${product_name}
       ELSE "Others"

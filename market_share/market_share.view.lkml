@@ -252,7 +252,8 @@ view: product_level_2 {
 
   measure: total_cat_price {
     label: "Total Category Price "
-    type: sum
+    type: sum_distinct
+    sql_distinct_key: ${unique_key} ;;
     sql:
       CASE
       WHEN ${product_company} IS NOT NULL
