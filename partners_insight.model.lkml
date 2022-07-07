@@ -198,6 +198,6 @@ explore: coke_aut {
   view_label: "Parnership Adhoc - Coke Austria"
 }
 
-explore: talabat_incidence_rate {
-  view_label: "Parnership Adhoc - Talabat Incidence Rate"
-}
+# explore: talabat_incidence_rate {
+#   view_label: "Parnership Adhoc - Talabat Incidence Rate"
+# }
