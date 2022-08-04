@@ -10,7 +10,6 @@ view: product_level_2 {
         ${market_share_monthly.SQL_TABLE_NAME} ii
       {% elsif date_granularity._parameter_value == "'Weekly'" %}
         ${market_share_weekly.SQL_TABLE_NAME} ii
-
       {% endif %}
   ;;
   }
@@ -91,7 +90,7 @@ view: product_level_2 {
     primary_key: yes
     type: string
     sql: CONCAT(${order_raw},${global_entity_id},${city},${category_group_global},
-                ${is_key_account},${store_type},${product_company},${product_company_market},${product_subtype},${product_type},${upselling})
+                ${is_key_account},${store_type},${product_company},${product_company_market},${product_type},${upselling})
       ;;
   }
 
@@ -218,11 +217,11 @@ view: product_level_2 {
     sql: ${TABLE}.product_company_filter;;
   }
 
-  dimension: product_subtype {
-    group_label: "Product"
-    type: string
-    sql: CASE WHEN ${TABLE}.product_subtype IS NULL OR ${TABLE}.product_subtype ="" THEN "Other" ELSE ${TABLE}.product_subtype END  ;;
-  }
+  # dimension: product_subtype {
+  #   group_label: "Product"
+  #   type: string
+  #   sql: CASE WHEN ${TABLE}.product_subtype IS NULL OR ${TABLE}.product_subtype ="" THEN "Other" ELSE ${TABLE}.product_subtype END  ;;
+  # }
 
   dimension: category_group_global {
     group_label: "Product"

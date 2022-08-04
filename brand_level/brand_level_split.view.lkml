@@ -1,21 +1,42 @@
-view: brand_level {
+view: brand_level_split {
   derived_table: {
     sql:
-    SELECT ii.*
-    FROM
-    {% if product_name._is_filtered and (upselling._is_filtered or product_type._is_filtered) %}
-    ${brand_level_split.SQL_TABLE_NAME} ii --brand split
-    {% elsif product_name._is_filtered  %}
-    ${brand_level_all.SQL_TABLE_NAME} ii --brand all
-    {% elsif (upselling._is_filtered or product_type._is_filtered) %}
-    ${company_level_split.SQL_TABLE_NAME} ii --company split
-    {% else %}  --company level
-    ${company_level_all.SQL_TABLE_NAME} ii
-    {% endif %}
-    WHERE {% condition date_granularity %} ii.period_seg {% endcondition %}
-    ;;
-  }
+      SELECT *
+      FROM fulfillment-dwh-production.rl_sales_revenue.partnerships_brand_level
 
+      UNION ALL --- ADDING TEST DATA FOR EXPLORING PURPOSE
+
+      SELECT
+          period_seg,
+          "Test" AS global_entity_id,
+          "Test" AS country_name,
+          report_period,
+          "Test" AS city_group,
+          "Test" AS category_group_global,
+          is_key_account,
+          store_type_group,
+          "Test" AS product_company_market,
+          "Test" AS product_company,
+          "Test" AS product_type,
+          "Test" AS product_subtype,
+          "Test" AS product_name,
+          CASE WHEN is_option IS TRUE THEN "Option" ELSE "Product" END AS product_option,
+          CASE WHEN is_upsell IS TRUE THEN 'With Upselling' ELSE 'Without Upselling' END AS product_upsell,
+          customers,
+          vendors AS restaurants,
+          orders,
+          quantity,
+          total_price_lc,
+          total_price_eur
+      FROM fulfillment-dwh-production.rl_sales_revenue.partnerships_product_level
+      WHERE global_entity_id IN ('FP_SG',"MJM_AT")
+      AND product_company IN ('Coca Cola')
+
+      ;;
+    sql_trigger_value: SELECT MAX(report_period) FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_order_level`  ;;
+    partition_keys: ["report_period"]
+    cluster_keys: ["period_seg","global_entity_id","product_company"]
+  }
 
   dimension: date_granularity {
     type: string
@@ -146,11 +167,11 @@ view: brand_level {
   }
 
   filter: brand_selection {
-    suggest_dimension: brand_level.product_name
+    suggest_dimension: product_name
   }
 
   filter: product_subtype_filter {
-    suggest_dimension: brand_level.product_subtype
+    suggest_dimension: product_subtype
   }
 
   dimension: brand_comparitor {
@@ -224,5 +245,4 @@ view: brand_level {
               ELSE ${product_name}
               END;;
   }
-
 }

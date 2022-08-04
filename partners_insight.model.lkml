@@ -1,6 +1,7 @@
 connection: "dhh-ncr-live"
 
 include: "/**/*.view.lkml"  # include all views in the views/ folder in this project
+#include: "/**/*.dashboard.lookml"
 
 datagroup: central_dwh_orders {
   sql_trigger: SELECT COUNT(*) FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_product_level` ;;
@@ -23,7 +24,7 @@ explore: product_level {
   }
 
   label: "Partnership - Product Level"
-  view_label: "Product Level"
+  view_label: "Partnership - Product Level"
   persist_with: central_dwh_orders
 
   access_filter: {
@@ -45,11 +46,11 @@ explore: product_level {
 explore: product_level_2 {
   always_filter: {
     filters: [product_level_2.product_company_market: "-NULL",
-      product_level_2.product_type: "All",product_level_2.upselling: "All",product_level_2.product_company_filter: "-Test"]
+      product_level_2.product_company_filter: "-Test"]
   }
 
   label: "Partnership - Market Share"
-  view_label: "Market Share"
+  view_label: "Partnership - Market Share"
   persist_with: central_dwh_orders
 
   access_filter: {
@@ -80,7 +81,7 @@ explore: product_level_2 {
 
 explore: top_restaurants {
   label: "Partnership - Top Restaurants"
-  view_label: "Top Restaurants"
+  view_label: "Partnership - Top Restaurants"
   persist_with: central_dwh_orders
 
   access_filter: {
@@ -101,7 +102,7 @@ explore: meta_data {
     unless: [date_granularity]
   }
   label: "Partnership - Country Data"
-  view_label: "Country Data"
+  view_label: "Partnership - Country Level"
   persist_with: central_dwh_orders
 
   access_filter: {
@@ -143,10 +144,10 @@ explore: meta_data {
 
 explore: brand_level {
   always_filter: {
-    filters: [brand_level.date_granularity: "Monthly",brand_level.product_name: "All Brands",brand_level.product_type: "All",brand_level.upselling: "All"]
+    filters: [brand_level.date_granularity: "Monthly"]
   }
   label: "Partnership - Brand Level"
-  view_label: "Brand Level"
+  view_label: "Partnership - Brand Level"
   persist_with: central_dwh_orders
 
   access_filter: {
@@ -166,24 +167,48 @@ explore: brand_level {
   }
 }
 
-  explore: unique_customers {
-    view_label: "Unique Customers"
-    label: "Partnership - Unique Customers"
-    persist_with: central_dwh_orders
+explore: brand_level_split {
+  always_filter: {
+    filters: [brand_level_split.date_granularity: "Monthly"]
+  }
+  label: "Partnership - Brand Level (With Option/Upselling)"
+  view_label: "Partnership - Brand Level (With Option/Upselling)"
+  persist_with: central_dwh_orders
 
-    access_filter: {
-      field: product_company
-      user_attribute: product_cpg
-    }
+  access_filter: {
+    field: store_type
+    user_attribute: shoptype
+  }
 
-    access_filter: {
-      field: global_entity_id
-      user_attribute: global_entity_id
-    }
+  access_filter: {
+    field: product_company
+    user_attribute: product_cpg
+  }
+
+  access_filter: {
+    field: global_entity_id
+    user_attribute: global_entity_id
+  }
+}
+
+explore: unique_customers {
+  view_label: "Partnership - Unique Customers"
+  label: "Partnership - Unique Customers"
+  persist_with: central_dwh_orders
+
+  access_filter: {
+    field: product_company
+    user_attribute: product_cpg
+  }
+
+  access_filter: {
+    field: global_entity_id
+    user_attribute: global_entity_id
+  }
 }
 
 explore: orders_hour_weekday {
-  view_label: "Orders Hour Weekday"
+  view_label: "Partnership - Orders Hour Weekday"
   label: "Partnership - Orders Hour Weekday"
   persist_with: central_dwh_orders
 

@@ -13,39 +13,14 @@ view: market_share_weekly {
                 opa.store_type_group,
                 opa.product_company,
                 opa.product_company_market,
-                opa.product_subtype,
                 opa.product_option,
                 opa.product_upsell,
                 SUM(opa.quantity) AS quantity,
                 SUM(opa.total_price_lc) AS total_price_lc ,
                 SUM(opa.total_price_eur) AS total_price_eur ,
-          FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_brand_level` AS opa
+          FROM ${company_level_split.SQL_TABLE_NAME} AS opa
           WHERE opa.period_seg = "Weekly"
-          GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14
-
-      UNION ALL
-
-      SELECT
-      opa.period_seg,
-      CAST(report_period as string) as date_string,
-      opa.report_period,
-      opa.global_entity_id,
-      opa.country_name,
-      opa.city_group,
-      opa.category_group_global,
-      opa.is_key_account,
-      opa.store_type_group,
-      opa.product_company,
-      opa.product_company_market,
-      opa.product_subtype,
-      opa.product_option,
-      opa.product_upsell,
-      SUM(opa.quantity) AS quantity,
-      SUM(opa.total_price_lc) AS total_price_lc ,
-      SUM(opa.total_price_eur) AS total_price_eur ,
-      FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_brand_level_all` AS opa
-      WHERE opa.period_seg = "Weekly"
-      GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14
+          GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13
 
       UNION ALL ---This query is to have "Others" to joinable with Country Data for Incidence Rate Calculation
 
@@ -60,13 +35,12 @@ view: market_share_weekly {
       opa.store_type_group,
       "Others" AS product_company,
       opa.product_company_market,
-      opa.product_subtype,
       opa.product_option,
       opa.product_upsell,
       0 AS quantity,
       0 AS total_price_lc ,
       0 AS total_price_eur ,
-      FROM ${brand_level.SQL_TABLE_NAME} AS opa
+      FROM ${company_level_split.SQL_TABLE_NAME} AS opa
       WHERE opa.period_seg = "Weekly"
       ),
 
@@ -103,7 +77,6 @@ view: market_share_weekly {
       opa.store_type_group,
       "Test" AS product_company,
       opa.product_company_market,
-      opa.product_subtype,
       opa.product_option,
       opa.product_upsell,
       SUM(opa.quantity) AS quantity,
@@ -114,7 +87,7 @@ view: market_share_weekly {
       WHERE global_entity_id IN ('FP_SG',"MJM_AT","DJ_CZ")
       AND product_company_filter = 'Coca Cola'
       AND product_company = 'Coca Cola'
-      GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,18
+      GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,17
 
       UNION ALL
 
@@ -129,7 +102,6 @@ view: market_share_weekly {
       opa.store_type_group,
       "Others" AS product_company,
       opa.product_company_market,
-      opa.product_subtype,
       opa.product_option,
       opa.product_upsell,
       SUM(opa.quantity) AS quantity,
@@ -140,7 +112,7 @@ view: market_share_weekly {
       WHERE global_entity_id IN ('FP_SG',"MJM_AT","DJ_CZ",'FP_MY',"FP_MM")
       AND product_company_filter = 'Coca Cola'
       AND product_company != 'Coca Cola'
-      GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,18
+      GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,17
       ;;
 
     datagroup_trigger: central_dwh_orders
