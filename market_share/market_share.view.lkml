@@ -23,7 +23,7 @@ view: product_level_2 {
       WHEN {% parameter date_granularity %} = 'Daily'
         THEN ${date_string}
       WHEN {% parameter date_granularity %} = 'Weekly'
-        THEN ${week_string}
+        THEN ${order_week}
       WHEN {% parameter date_granularity %} = 'Monthly'
         THEN format_datetime('%b %y',${TABLE}.report_period)
       ELSE NULL
