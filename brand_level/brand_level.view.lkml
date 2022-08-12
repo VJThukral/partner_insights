@@ -3,9 +3,9 @@ view: brand_level {
     sql:
     SELECT ii.*
     FROM
-    {% if product_name._is_filtered and (upselling._is_filtered or product_type._is_filtered) %}
+    {% if (product_name._is_filtered or product_subtype._is_filtered) and (upselling._is_filtered or product_type._is_filtered) %}
     ${brand_level_split.SQL_TABLE_NAME} ii --brand split
-    {% elsif product_name._is_filtered  %}
+    {% elsif product_name._is_filtered or product_subtype._is_filtered %}
     ${brand_level_all.SQL_TABLE_NAME} ii --brand all
     {% elsif (upselling._is_filtered or product_type._is_filtered) %}
     ${company_level_split.SQL_TABLE_NAME} ii --company split
