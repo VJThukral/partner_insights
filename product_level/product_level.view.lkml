@@ -26,7 +26,6 @@ label: "product_level"
     opa.total_price_eur,
     CAST(report_period as string) as date_string
     FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_product_level` AS opa
-    WHERE {% condition date_granularity %} opa.period_seg {% endcondition %}
 
     UNION ALL
 
@@ -56,8 +55,7 @@ label: "product_level"
     opa.total_price_eur,
     CAST(report_period as string) as date_string
     FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_product_level` AS opa
-    WHERE {% condition date_granularity %} opa.period_seg {% endcondition %}
-    AND global_entity_id IN ('FP_SG',"MJM_AT","DJ_CZ")
+    WHERE global_entity_id IN ('FP_SG',"MJM_AT","DJ_CZ")
     AND product_company IN ('Coca Cola')
 
     UNION ALL
@@ -88,10 +86,13 @@ label: "product_level"
     opa.total_price_eur,
     CAST(report_period as string) as date_string
     FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_product_level` AS opa
-    WHERE {% condition date_granularity %} opa.period_seg {% endcondition %}
-    AND global_entity_id IN ('FP_SG',"MJM_AT","DJ_CZ")
+    WHERE global_entity_id IN ('FP_SG',"MJM_AT","DJ_CZ")
     AND product_company IN ('Redbull','AB Inbev')
     ;;
+
+    sql_trigger_value: SELECT MAX(report_period) FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_order_level`  ;;
+    partition_keys: ["report_period"]
+    cluster_keys: ["period_seg","global_entity_id","product_company"]
     }
 
 

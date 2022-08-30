@@ -20,7 +20,7 @@ datagroup: talabat_incidence_rate {
 
 explore: product_level {
   always_filter: {
-    filters: [product_level.date_granularity: "Monthly",product_level.product_company: "-Test",product_level.currency_picker: "eur"]
+    filters: [product_level.date_granularity: "Monthly",product_level.product_company: "-Test"]
   }
 
   label: "Partnership - Product Level"
@@ -45,7 +45,7 @@ explore: product_level {
 
 explore: product_level_2 {
   always_filter: {
-    filters: [product_level_2.product_company_market: "-NULL",product_level_2.product_company_filter: "-Test",product_level_2.currency_picker: "eur"]
+    filters: [product_level_2.product_company_market: "-NULL",product_level_2.product_company_filter: "-Test"]
   }
 
   label: "Partnership - Market Share"
@@ -143,7 +143,7 @@ explore: meta_data {
 
 explore: brand_level {
   always_filter: {
-    filters: [brand_level.date_granularity: "Monthly",brand_level.currency_picker: "eur"]
+    filters: [brand_level.date_granularity: "Monthly"]
   }
   label: "Partnership - Brand Level"
   view_label: "Partnership - Brand Level"
@@ -168,7 +168,7 @@ explore: brand_level {
 
 explore: brand_level_split {
   always_filter: {
-    filters: [brand_level_split.date_granularity: "Monthly",brand_level_split.currency_picker: "eur"]
+    filters: [brand_level_split.date_granularity: "Monthly"]
   }
   label: "Partnership - Brand Level (With Option/Upselling)"
   view_label: "Partnership - Brand Level (With Option/Upselling)"
