@@ -24,7 +24,7 @@ view: brand_level {
 
   dimension: date_string {
     type: string
-    sql: CAST(report_period as string) ;;
+    sql: CAST(${TABLE}.report_period as string) ;;
   }
 
   dimension: upselling {

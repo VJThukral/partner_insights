@@ -3,7 +3,6 @@ view: meta_data {
   derived_table: {
     sql:SELECT *,
         "Others" AS product_company,
-        CAST(report_period as string) as date_string,
         FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_metadata`
 
         UNION ALL
@@ -19,7 +18,6 @@ view: meta_data {
             vendors,
             orders,
             "Others" AS product_company,
-        CAST(report_period as string) as date_string,
         FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_metadata`
         WHERE global_entity_id IN ('FP_SG',"MJM_AT","DJ_CZ",'FP_MY',"FP_MM")
           ;;
@@ -69,7 +67,7 @@ view: meta_data {
 
   dimension: date_string {
     type: string
-    sql: ${TABLE}.date_string ;;
+    sql: CAST(${TABLE}.report_period AS STRING) ;;
   }
 
 

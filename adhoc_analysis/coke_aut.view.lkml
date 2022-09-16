@@ -281,9 +281,9 @@ view: coke_aut {
   order_by_field: product_size_numeral
   group_label: "Product"
   type: string
-  sql: CASE WHEN ${product_size_numeral} IS NOT NULL
-        AND ${TABLE}.product_size_unit = 'ml'
-        THEN CONCAT(${product_size_numeral}," ",${TABLE}.product_size_unit)
+    sql: CASE WHEN ${product_size_numeral} IS NOT NULL
+    --AND ${TABLE}.product_size_unit = 'ml'
+    THEN CONCAT(${product_size_numeral}," ",COALESCE(${TABLE}.product_size_unit,"ml"))
         ELSE NULL
         END;;
   }

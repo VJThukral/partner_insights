@@ -12,9 +12,11 @@ view: unique_customers {
         "Test" AS city_group,
         report_period,
         "Test" AS product_company,
+        store_type_group,
         vendors,
         orders,
-        users,
+        customers,
+        new_customers,
         CAST(report_period as string) as date_string
     FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_company_monthly_stats`
     WHERE global_entity_id IN ('FP_SG',"MJM_AT")
@@ -109,7 +111,6 @@ view: unique_customers {
     sql: CASE WHEN ${city} = "Other" Then "ω" ELSE ${city} END;;
   }
 
-
   dimension: product_company {
     group_label: "Product"
     type: string
@@ -118,6 +119,10 @@ view: unique_customers {
           ELSE ${TABLE}.product_company END;;
   }
 
+  dimension: store_type {
+    type: string
+    sql: ${TABLE}.store_type_group ;;
+  }
 
   measure: total_vendor{
     label: "Total Vendors"
@@ -131,12 +136,28 @@ view: unique_customers {
     sql:${TABLE}.orders;;
   }
 
-
   measure: total_customers {
     label: "Total Customers"
     type:  sum
-    sql:${TABLE}.users;;
+    sql:${TABLE}.customers;;
   }
 
+  measure: new_customers {
+    label: "New Customers"
+    type:  sum
+    sql:${TABLE}.new_customers;;
+  }
+
+  measure: returning_customers {
+    label: "Returning Customers"
+    type:  number
+    sql: ${total_customers} - ${new_customers} ;;
+  }
+
+  measure: acquisition_ratio {
+    type:  number
+    sql: SAFE_DIVIDE(${new_customers},${total_customers}) ;;
+    value_format_name: percent_0
+  }
 
 }
