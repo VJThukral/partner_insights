@@ -145,6 +145,13 @@ view: brand_level {
     sql: ${TABLE}.product_name ;;
   }
 
+  dimension: product_name_sorting{
+    type: string
+    sql: CASE WHEN ${product_name} = 'All Brands' THEN NULL
+              ELSE ${product_name}
+              END;;
+  }
+
   filter: brand_selection {
     suggest_dimension: brand_level.product_name
   }
@@ -215,14 +222,6 @@ view: brand_level {
       ELSE NULL
     END ;;
     value_format_name: decimal_2
-  }
-
-
-  dimension: product_name_sorting{
-    type: string
-    sql: CASE WHEN ${product_name} = 'All Brands' THEN NULL
-              ELSE ${product_name}
-              END;;
   }
 
 }

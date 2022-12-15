@@ -1,46 +1,35 @@
-view: orders_hour_weekday {###Total platform orders in the last 6 months
+view: dh_orders_hour_weekday {
   label: "orders_hour_weekday"
   derived_table: {
-    sql: SELECT *
-    FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_orders_by_hour`
+    sql: DECLARE end_date DATE DEFAULT '{{ next_ds }}';
 
-    UNION ALL
+CREATE OR REPLACE TABLE `{{ params.project_id }}.{{ params.dataset.rl }}.partnerships_dh_orders_by_hour`
+CLUSTER BY global_entity_id
+AS
+SELECT
+    rfo.global_entity_id,
+    dim_r.country_name,
+    dim_r.city_group,
+    EXTRACT(DAYOFWEEK FROM rfo.placed_at_local) as report_period_weekday,
+    EXTRACT(HOUR FROM rfo.placed_at_local) AS report_period_hour,
+    COUNT(*) as orders
+FROM `fulfillment-dwh-production.curated_data_shared_central_dwh.orders` AS rfo
+    INNER JOIN `fulfillment-dwh-production.curated_data_shared_central_dwh.global_entities` AS dim_c
+        ON  rfo.global_entity_id       = dim_c.global_entity_id
+        AND dim_c.is_reporting_enabled IS TRUE
+        AND dim_c.is_platform_online IS TRUE
+    INNER JOIN `{{ params.project_id }}.{{ params.dataset.rl }}.partnerships_dim_restaurant` AS dim_r
+        ON  rfo.global_entity_id       = dim_r.global_entity_id
+        AND rfo.vendor_id   = dim_r.vendor_id
+WHERE rfo.is_sent IS TRUE
+        AND rfo.placed_at_local BETWEEN DATE_SUB(DATE_TRUNC(DATE_ADD(end_date,INTERVAL -6 MONTH),MONTH), INTERVAL 1 DAY) AND DATE_ADD(DATETIME(end_date), INTERVAL 1 DAY)
+        AND DATE(rfo.placed_at) BETWEEN DATETIME(DATE_TRUNC(DATE_ADD(end_date,INTERVAL -6 MONTH),MONTH)) AND end_date
+        AND rfo.placed_at_local != CAST(rfo.placed_at_local AS DATE)
+        -- exclude orders with the timestamp of 00:00:00
+        -- because DATE_PART(hour, ...) yields 0 with dates without timestamps too
+GROUP BY 1,2,3,4,5
 
-    SELECT 'Test' AS global_entity_id,
-        'Test' AS country_name,
-        report_period,
-        report_period_weekday,
-        report_period_hour,
-        'Test' AS city_group,
-        'Test' AS product_company,
-        'Test' AS product_name,
-        orders,
-    FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_orders_by_hour`
-    WHERE global_entity_id IN ('FP_SG',"MJM_AT","DJ_CZ",'FP_MY',"FP_MM")
-
-    ;;
-    }
-
-  dimension_group: order {
-    #convert_tz: no
-    type: time
-    datatype: datetime
-    description: "Local time when the order was placed. This is partitioning column."
-    timeframes: [
-      raw,
-      hour,
-      hour_of_day,
-      time,
-      date,
-      week,
-      day_of_week,
-      week_of_year,
-      month,
-      month_name,
-      quarter,
-      year
-    ]
-    sql: ${TABLE}.report_period ;;
+      ;;
   }
 
   dimension: report_period_weekday {
@@ -128,23 +117,11 @@ view: orders_hour_weekday {###Total platform orders in the last 6 months
   }
 
   dimension: city_sorting{
-    hidden: yes
     type: string
     group_label: "Global Entity"
     sql: CASE WHEN ${city} = "Other" Then "ω" ELSE ${city} END;;
   }
 
-  dimension: product_company {
-    group_label: "Product"
-    type: string
-    sql: ${TABLE}.product_company;;
-  }
-
-  dimension: product_name {
-    group_label: "Product"
-    type: string
-    sql: ${TABLE}.product_name ;;
-  }
 
   measure: total_order {
     label: "Successful Orders"

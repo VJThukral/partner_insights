@@ -1,53 +1,37 @@
 view: unique_customers {
   label: "unique_customers"
   derived_table: {
-    sql: SELECT *,
-        CAST(report_period as string) as date_string
-    FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_company_monthly_stats`
+    sql: {% if (product_name._is_filtered) %} --Brand Level
+
+        SELECT *
+        FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_company_monthly_stats`
+        WHERE granularity = "Brand"
+
+        {% else %}  --Company Level
+
+        SELECT *
+        FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_company_monthly_stats`
+        WHERE granularity = "Company"
+
+        {% endif %}
 
     UNION ALL
 
-    SELECT "Test" AS global_entity_id,
+    SELECT
+        granularity,
+        "Test" AS global_entity_id,
         "Test" AS country_name,
         "Test" AS city_group,
         report_period,
         "Test" AS product_company,
+        "Test" AS product_name,
         store_type_group,
-        vendors,
-        orders,
         customers,
-        new_customers,
-        CAST(report_period as string) as date_string
+        new_customers
     FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_company_monthly_stats`
     WHERE global_entity_id IN ('FP_SG',"MJM_AT")
     AND product_company IN ('Coca Cola')
     ;;
-  }
-
-  dimension: report_period_weekday {
-    type: string
-    order_by_field: report_period_weekday_sorting
-    sql: CASE WHEN ${TABLE}.report_period_weekday = 1 THEN 'Sunday'
-              WHEN ${TABLE}.report_period_weekday = 2 THEN 'Monday'
-              WHEN ${TABLE}.report_period_weekday = 3 THEN 'Tuesday'
-              WHEN ${TABLE}.report_period_weekday = 4 THEN 'Wednesday'
-              WHEN ${TABLE}.report_period_weekday = 5 THEN 'Thursday'
-              WHEN ${TABLE}.report_period_weekday = 6 THEN 'Friday'
-              WHEN ${TABLE}.report_period_weekday = 7 THEN 'Saturday'
-              ElSE NULL END;;
-  }
-
-  dimension: report_period_weekday_sorting {
-    type: number
-    hidden: yes
-    sql:CASE WHEN ${report_period_weekday} = 'Sunday' THEN 7
-              WHEN ${report_period_weekday} = 'Monday' THEN 1
-              WHEN ${report_period_weekday}= 'Tuesday' THEN 2
-              WHEN ${report_period_weekday} = 'Wednesday' THEN 3
-              WHEN ${report_period_weekday} = 'Thursday' THEN 4
-              WHEN ${report_period_weekday} = 'Friday' THEN 5
-              WHEN ${report_period_weekday} = 'Saturday' THEN 6
-              ElSE NULL END;;
   }
 
   dimension_group: order {
@@ -72,17 +56,17 @@ view: unique_customers {
     sql: ${TABLE}.report_period ;;
   }
 
-  dimension: date_string {
-    type: string
-    sql: ${TABLE}.date_string ;;
-  }
-
   dimension: date {
     order_by_field: order_month
     group_label: "Date Dimension"
     sql: format_datetime('%b %y',${TABLE}.report_period);;
   }
 
+  dimension: granularity {
+    hidden: yes
+    type: string
+    sql: ${TABLE}.granularity ;;
+  }
 
   dimension: global_entity_id {
     hidden: yes
@@ -119,21 +103,15 @@ view: unique_customers {
           ELSE ${TABLE}.product_company END;;
   }
 
+  dimension: product_name {
+    group_label: "Product"
+    type: string
+    sql: ${TABLE}.product_name ;;
+  }
+
   dimension: store_type {
     type: string
     sql: ${TABLE}.store_type_group ;;
-  }
-
-  measure: total_vendor{
-    label: "Total Vendors"
-    type:  sum
-    sql: ${TABLE}.restaurants ;;
-  }
-
-  measure: total_order {
-    label: "Successful Orders"
-    type:  sum
-    sql:${TABLE}.orders;;
   }
 
   measure: total_customers {

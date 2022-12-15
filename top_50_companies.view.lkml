@@ -1,4 +1,4 @@
-view: top_50_companies {
+view: top_50_companies {###View being used for ranking purpose and show only top 50 CPGs in market share module
   derived_table: {
     explore_source: product_level_2 {
       column: product_company {}
