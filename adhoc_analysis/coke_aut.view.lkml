@@ -1,147 +1,20 @@
 view: coke_aut {
-    derived_table: {
-      sql:
-      WITH partnerships_order_product_all AS
-(
-SELECT
-  oi.global_entity_id
-  , oi.order_id
-  , oi.placed_at_local
-  , oi.vendor_id
-  , oi.analytical_customer_id
-  , FALSE AS is_upsell
-  , FALSE AS is_option
-  , product.id AS product_id
-  --pattern to differentiate combo product, if (1) has combo pattern in main title OR (2) if product exist only in desc but not exists in main product title, we consider them as combo as well
-  , COALESCE(pm.product_alias,pm1.product_alias) product_alias
-  , COALESCE(pm.product_size_numeral,pm1.product_size_numeral) product_size_numeral
-  , COALESCE(pm.product_size_unit,pm1.product_size_unit) product_size_unit
-  , COALESCE(pm.product_type,pm1.product_type) product_type
-  , COALESCE(pm.product_subtype,pm1.product_subtype) product_subtype
-  , COALESCE(pm.product_company,pm1.product_company) product_company
-  , product.quantity
-  FROM `fulfillment-dwh-production.curated_data_shared_central_dwh.orders` AS oi,
-  UNNEST(oi.items) AS product
-  LEFT JOIN `fulfillment-dwh-production.curated_data_shared_data_stream.products`  AS p
-    ON oi.global_entity_id = p.global_entity_id
-    AND oi.vendor_id = p.vendor_id
-    AND product.id = p.product_id
-  LEFT JOIN `fulfillment-dwh-production.rl_sales_revenue.partnerships_order_product_mapping` AS pm
-    ON  oi.global_entity_id = pm.global_entity_id
-    AND product.name = pm.product_name
-  LEFT JOIN `fulfillment-dwh-production.rl_sales_revenue.partnerships_order_product_mapping` AS pm1 --description
-    ON  p.global_entity_id = pm1.global_entity_id
-    AND p.description = pm1.product_name
-  WHERE oi.placed_at_local BETWEEN DATE_SUB(DATE_TRUNC(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH), MONTH), INTERVAL 1 DAY) AND CURRENT_DATE()
-    AND DATE(oi.placed_at) BETWEEN DATETIME(DATE_TRUNC(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH), MONTH)) AND CURRENT_DATE()
-    AND oi.global_entity_id = "MJM_AT"
-    AND oi.is_sent IS TRUE
-    AND oi.is_qcommerce IS FALSE
-    AND product.id IS NOT NULL
+  sql_table_name: `fulfillment-dwh-production.rl_sales_revenue.partnerships_order_level` ;;
 
-  UNION ALL
-
-  SELECT
-  oo.global_entity_id
-  , oo.order_id
-  , oo.placed_at_local
-  , oo.vendor_id
-  , oo.analytical_customer_id
-  , option.unit_price > 0 AS is_upsell
-  , TRUE AS is_option
-  , option.id AS product_id
-  , pm.product_alias
-  , pm.product_size_numeral
-  , pm.product_size_unit
-  , pm.product_type
-  , pm.product_subtype
-  , pm.product_company
-  , option.quantity
-  FROM `fulfillment-dwh-production.curated_data_shared_central_dwh.orders` AS oo,
-  UNNEST(oo.items) AS product,
-  UNNEST(product.options) AS option
-  LEFT JOIN `fulfillment-dwh-production.rl_sales_revenue.partnerships_order_product_mapping` AS pm
-    ON  oo.global_entity_id = pm.global_entity_id
-    AND option.name = pm.product_name
-  WHERE oo.placed_at_local BETWEEN DATE_SUB(DATE_TRUNC(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH), MONTH), INTERVAL 1 DAY) AND CURRENT_DATE()
-    AND DATE(oo.placed_at) BETWEEN DATETIME(DATE_TRUNC(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH), MONTH)) AND CURRENT_DATE()
-    AND oo.is_sent IS TRUE
-    AND option.id IS NOT NULL
-    AND oo.is_qcommerce IS FALSE
-    AND oo.global_entity_id = "MJM_AT"
-
-  UNION ALL
-
-  SELECT
-  oo.global_entity_id
-  , oo.order_id
-  , oo.placed_at_local
-  , oo.vendor_id
-  , oo.analytical_customer_id
-  , option.unit_price > 0 AS is_upsell
-  , TRUE AS is_option
-  , option.id AS product_id
-  , pm.product_alias
-  , pm.product_size_numeral
-  , pm.product_size_unit
-  , pm.product_type
-  , pm.product_subtype
-  , pm.product_company
-  , option.quantity
-FROM `fulfillment-dwh-production.curated_data_shared_central_dwh.orders` AS oo,
-UNNEST(oo.items) AS product,
-UNNEST(product.options) AS options, --1st
-UNNEST(options.options) AS option --2nd
-LEFT JOIN `fulfillment-dwh-production.rl_sales_revenue.partnerships_order_product_mapping` AS pm
-  ON  oo.global_entity_id = pm.global_entity_id
-  AND option.name = pm.product_name
-WHERE oo.placed_at_local BETWEEN DATE_SUB(DATE_TRUNC(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH), MONTH), INTERVAL 1 DAY) AND DATE_ADD(DATETIME(CURRENT_DATE()), INTERVAL 1 DAY)
-  AND DATE(oo.placed_at) BETWEEN DATETIME(DATE_TRUNC(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH), MONTH)) AND CURRENT_DATE()
-  AND oo.is_sent IS TRUE
-  AND oo.is_qcommerce IS FALSE
-  AND oo.global_entity_id = "MJM_AT"
-)
-
-SELECT
-  opa.global_entity_id
-  , dim_r.country_name
-  , CAST(DATE_TRUNC(opa.placed_at_local, day) AS DATE) AS report_day
-  , CAST(TIME(placed_at_local) AS STRING) AS report_time
-  , dim_r.city_group
-  , dim_r.category_group_global
-  , dim_r.is_key_account
-  , dim_r.store_type_group
-  , opa.product_type AS product_company_market
-  , opa.product_company
-  , opa.product_subtype
-  , opa.product_alias AS product_name
-  , opa.product_size_numeral
-  , opa.product_size_unit
-  , opa.is_option
-  , opa.is_upsell
-  , opa.order_id
-  , opa.quantity
-FROM partnerships_order_product_all AS opa
-INNER JOIN `fulfillment-dwh-production.rl_sales_revenue.partnerships_dim_restaurant` AS dim_r
-  ON  opa.global_entity_id = dim_r.global_entity_id
-  AND opa.vendor_id = dim_r.vendor_id
-WHERE opa.global_entity_id = "MJM_AT"
-  AND opa.product_company = "Coca Cola"
-        ;;
-      datagroup_trigger: coke_aut
-      partition_keys: ["report_day"]
-      cluster_keys: ["global_entity_id","product_company"]
-    }
-
+  dimension: report_period {
+    type: date
+    sql: CAST(DATE_TRUNC(${TABLE}.report_period, day) AS TIMESTAMP);;
+    hidden: yes
+  } ###for partrition only
 
   dimension: report_day {
     type: date
-    sql: TIMESTAMP(${TABLE}.report_day) ;;
+    sql: CAST(DATE_TRUNC(${TABLE}.placed_at_local, day) AS TIMESTAMP) ;;
   }
 
   dimension: report_time {
     type: string
-    sql: ${TABLE}.report_time ;;
+    sql: CAST(TIME(${TABLE}.placed_at_local) AS STRING) ;;
   }
 
   parameter: currency_picker {

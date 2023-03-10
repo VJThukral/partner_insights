@@ -8,15 +8,15 @@ datagroup: central_dwh_orders {
   max_cache_age: "24 hours"
 }
 
-datagroup: coke_aut {
-  sql_trigger: SELECT DATE_TRUNC(DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY),MONTH) ;; #Refresh on the 2nd of each month
-  max_cache_age: "24 hours"
-}
+# datagroup: coke_aut {
+#   sql_trigger: SELECT DATE_TRUNC(DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY),MONTH) ;; #Refresh on the 2nd of each month
+#   max_cache_age: "24 hours"
+# }
 
-datagroup: talabat_incidence_rate {
-  sql_trigger: SELECT DATE_TRUNC(DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY),WEEK) ;; #Refresh on the 2nd of each month
-  max_cache_age: "24 hours"
-}
+# datagroup: talabat_incidence_rate {
+#   sql_trigger: SELECT DATE_TRUNC(DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY),WEEK) ;; #Refresh on the 2nd of each month
+#   max_cache_age: "24 hours"
+# }
 
 explore: product_level {
   sql_always_where: ${order_raw} BETWEEN DATETIME(DATE_TRUNC(DATE_SUB(CURRENT_DATE(), INTERVAL 14 MONTH), MONTH)) AND CURRENT_DATE() ;;
@@ -257,6 +257,11 @@ explore: orders_hour_weekday {
 
 explore: coke_aut {
   view_label: "Parnership Adhoc - Coke Austria"
+  always_filter: {
+    filters: [coke_aut.product_company: "Coca Cola"
+              ,coke_aut.global_entity_id: "MJM_AT"
+              , coke_aut.report_period: "1 month ago for 1 month"]
+  }
 }
 
 # explore: talabat_incidence_rate {
