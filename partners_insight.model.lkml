@@ -142,7 +142,41 @@ explore: meta_data {
     field: global_entity_id
     user_attribute: global_entity_id
   }
+}
 
+explore: cpg_meta_data {
+  label: "Partnership - Incidence Rate 2"
+  view_label: "Market Orders"
+  sql_always_where: ${order_raw} BETWEEN DATETIME(DATE_TRUNC(DATE_SUB(CURRENT_DATE(), INTERVAL 14 MONTH), MONTH)) AND CURRENT_DATE() ;;
+  conditionally_filter: {
+    filters: [cpg_meta_data.date_granularity: "Monthly"]
+    unless: [date_granularity]
+  }
+  persist_with: central_dwh_orders
+
+  ###https://community.looker.com/lookml-5/bigquery-how-to-use-filters-to-search-for-multiple-matches-in-a-nested-field-11942
+
+  join: cpg_list {
+    view_label: "CPG Lists"
+    relationship: one_to_many
+    sql: , UNNEST(CPG_list) AS cpg_list ;;
+  }
+
+  access_filter: {
+    field: cpg_list.cpg
+    user_attribute: product_cpg
+  }
+
+
+  access_filter: {
+    field: store_type
+    user_attribute: shoptype
+  }
+
+  access_filter: {
+    field: global_entity_id
+    user_attribute: global_entity_id
+  }
 }
 
 #   explore: product_level_without_upselling {
