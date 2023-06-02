@@ -1,3 +1,4 @@
+#This is the only metric in Market Share module cant aggregated due to logic itself have to check full week/month
 view: cpg_meta_data {
   derived_table: {
     sql:
@@ -19,14 +20,14 @@ view: cpg_meta_data {
 
       CPG_vendors_daily AS (
       SELECT
-        opa.global_entity_id,
-        opa.country_name,
-        DATE_TRUNC(opa.report_period,DAY) AS report_period,
-        opa.city_group,
-        opa.store_type_group,
-        opa.vendor_id,
-        opa.is_key_account,
-        ARRAY_AGG(DISTINCT opa.product_company ORDER BY opa.product_company) AS CPG_list
+      opa.global_entity_id,
+      opa.country_name,
+      DATE_TRUNC(opa.report_period,DAY) AS report_period,
+      opa.city_group,
+      opa.store_type_group,
+      opa.vendor_id,
+      opa.is_key_account,
+      ARRAY_AGG(DISTINCT opa.product_company ORDER BY opa.product_company) AS CPG_list
       FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_order_level` AS opa
       WHERE opa.product_company != "Other"
       AND opa.product_company IS NOT NULL
@@ -35,14 +36,14 @@ view: cpg_meta_data {
 
       CPG_vendors_weekly AS (
       SELECT
-        opa.global_entity_id,
-        opa.country_name,
-        DATE_TRUNC(opa.report_period,WEEK(MONDAY)) AS report_period,
-        opa.city_group,
-        opa.store_type_group,
-        opa.vendor_id,
-        opa.is_key_account,
-        ARRAY_AGG(DISTINCT opa.product_company ORDER BY opa.product_company) AS CPG_list
+      opa.global_entity_id,
+      opa.country_name,
+      DATE_TRUNC(opa.report_period,WEEK(MONDAY)) AS report_period,
+      opa.city_group,
+      opa.store_type_group,
+      opa.vendor_id,
+      opa.is_key_account,
+      ARRAY_AGG(DISTINCT opa.product_company ORDER BY opa.product_company) AS CPG_list
       FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_order_level` AS opa
       WHERE opa.product_company != "Other"
       AND opa.product_company IS NOT NULL
@@ -51,12 +52,12 @@ view: cpg_meta_data {
 
       vendors_weekly AS (
       SELECT
-       DATE_TRUNC(report_date,WEEK(MONDAY)) AS report_period
-        , global_entity_id
-        , vendor_id
-        , SUM(successful_orders)       as orders
-        , SUM(value.GMV_eur)        as total_GMV_eur
-        , SUM(value.GMV_local)        as total_GMV_local
+      DATE_TRUNC(report_date,WEEK(MONDAY)) AS report_period
+      , global_entity_id
+      , vendor_id
+      , SUM(successful_orders)       as orders
+      , SUM(value.GMV_eur)        as total_GMV_eur
+      , SUM(value.GMV_local)        as total_GMV_local
       FROM `fulfillment-dwh-production.curated_data_shared_central_dwh.agg_vendor_kpis_daily`
       WHERE report_date BETWEEN DATE_SUB(DATE_TRUNC(DATE_SUB(CURRENT_DATE(), INTERVAL 15 MONTH), MONTH), INTERVAL 1 DAY) AND DATE_ADD(DATETIME(CURRENT_DATE()), INTERVAL 1 DAY)
       GROUP BY 1,2,3
@@ -64,12 +65,12 @@ view: cpg_meta_data {
 
       vendors_monthly AS (
       SELECT
-       DATE_TRUNC(report_date,MONTH) AS report_period
-        , global_entity_id
-        , vendor_id
-        , SUM(successful_orders)       as orders
-        , SUM(value.GMV_eur)        as total_GMV_eur
-        , SUM(value.GMV_local)        as total_GMV_local
+      DATE_TRUNC(report_date,MONTH) AS report_period
+      , global_entity_id
+      , vendor_id
+      , SUM(successful_orders)       as orders
+      , SUM(value.GMV_eur)        as total_GMV_eur
+      , SUM(value.GMV_local)        as total_GMV_local
       FROM `fulfillment-dwh-production.curated_data_shared_central_dwh.agg_vendor_kpis_daily`
       WHERE report_date BETWEEN DATE_SUB(DATE_TRUNC(DATE_SUB(CURRENT_DATE(), INTERVAL 15 MONTH), MONTH), INTERVAL 1 DAY) AND DATE_ADD(DATETIME(CURRENT_DATE()), INTERVAL 1 DAY)
       GROUP BY 1,2,3
@@ -166,7 +167,7 @@ view: cpg_meta_data {
         WHEN ${date_granularity} = 'Weekly'
           THEN ${order_week}
         WHEN ${date_granularity} = 'Monthly'
-          THEN format_datetime('%b %y',${TABLE}.report_period)
+          THEN ${order_month}
         ELSE NULL
       END ;;
   }

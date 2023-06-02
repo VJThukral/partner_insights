@@ -12,20 +12,64 @@ view: brand_level {
     {% else %}  --company level
     ${company_level_all.SQL_TABLE_NAME} ii
     {% endif %}
-    WHERE {% condition date_granularity %} ii.period_seg {% endcondition %}
+    WHERE {% if aggregation_level._parameter_value == "'Aggregatable'" %}
+      ii.period_seg = "Daily" ---With this tablle, all metrics under this are aggregated from daily to weekly/monthly
+      {% else %}
+      1 = 1 ---With this tablle, all metrics under this are non-aggregated, has to use period_seg to hit the pre-cal in BQ
+      {% endif %}
     ;;
   }
 
-
-  dimension: date_granularity {
+  dimension: period_seg {
     type: string
     sql: ${TABLE}.period_seg ;;
   }
 
-  dimension: date_string {
+  parameter: aggregation_level {
+    type: string
+    allowed_value: { value: "Aggregatable" }
+    allowed_value: { value: "Non-Aggregatable" } ###Must use this together with period_seg dim whenever reporting any non-agg metric such as vendor and customer count
+    default_value: "Aggregatable"
+  }
+
+  parameter: date_granularity {#Used only for aggregatable metrics to rollup different time granularity
+    type: unquoted
+    allowed_value: { value: "Monthly" }
+    allowed_value: { value: "Weekly" }
+    allowed_value: { value: "Daily" }
+    default_value: "Monthly"
+  }
+
+    dimension: date_string {
     type: string
     sql: CAST(${TABLE}.report_period as string) ;;
   }
+
+  dimension: date {
+    sql:---For Non-Aggregatable metrics like customers and vendor count
+      {% if period_seg._value == 'Daily' and aggregation_level._parameter_value == "'Non-Aggregatable'"  %}
+        ${date_string}
+      {% elsif period_seg._value == 'Weekly' and aggregation_level._parameter_value == "'Non-Aggregatable'" %}
+        ${order_week}
+      {% elsif period_seg._value == 'Monthly' and aggregation_level._parameter_value == "'Non-Aggregatable'" %}
+        ${order_month}
+    ---For Aggregatable metrics
+      {% elsif date_granularity._parameter_value == 'Daily' %}
+        ${order_date}
+      {% elsif date_granularity._parameter_value == 'Monthly' %}
+        ${order_month}
+      {% elsif date_granularity._parameter_value == 'Weekly' %}
+        ${order_week}
+      {% endif %};;
+  }
+
+
+  # dimension: date_granularity {
+  #   type: string
+  #   sql: ${TABLE}.period_seg ;;
+  # }
+
+
 
   dimension: upselling {
     type: string
@@ -37,20 +81,20 @@ view: brand_level {
     sql:${TABLE}.product_option;;
   }
 
-  dimension: date {
-    order_by_field: order_date
-    group_label: "Date Dimension"
-    sql:
-    CASE
-      WHEN ${date_granularity} = 'Daily'
-        THEN ${date_string}
-      WHEN ${date_granularity} = 'Weekly'
-        THEN ${order_week}
-      WHEN ${date_granularity} = 'Monthly'
-        THEN format_datetime('%b %y',${TABLE}.report_period)
-      ELSE NULL
-    END ;;
-  }
+  # dimension: date {
+  #   order_by_field: order_date
+  #   group_label: "Date Dimension"
+  #   sql:
+  #   CASE
+  #     WHEN ${date_granularity} = 'Daily'
+  #       THEN ${date_string}
+  #     WHEN ${date_granularity} = 'Weekly'
+  #       THEN ${order_week}
+  #     WHEN ${date_granularity} = 'Monthly'
+  #       THEN format_datetime('%b %y',${TABLE}.report_period)
+  #     ELSE NULL
+  #   END ;;
+  # }
 
   dimension_group: order {
     #convert_tz: no

@@ -21,7 +21,7 @@ datagroup: central_dwh_orders {
 explore: product_level {
   sql_always_where: ${order_raw} BETWEEN DATETIME(DATE_TRUNC(DATE_SUB(CURRENT_DATE(), INTERVAL 14 MONTH), MONTH)) AND CURRENT_DATE() ;;
   always_filter: {
-    filters: [product_level.date_granularity: "Monthly",product_level.product_company: "-Test"]
+    filters: [product_level.product_company: "-Test"]
   }
 
   label: "Partnership - Product Level"
@@ -47,7 +47,7 @@ explore: product_level {
 explore: product_level_daily {
   sql_always_where: ${order_raw} BETWEEN DATETIME(DATE_TRUNC(DATE_SUB(CURRENT_DATE(), INTERVAL 14 MONTH), MONTH)) AND CURRENT_DATE() ;;
   always_filter: {
-    filters: [product_level_daily.date_granularity: "Monthly",product_level_daily.product_company: "-Test"]
+    filters: [,product_level_daily.product_company: "-Test"]
   }
 
   label: "Partnership - Product Level Daily"
@@ -125,10 +125,6 @@ explore: top_restaurants {
 
 explore: meta_data {
   sql_always_where: ${order_raw} BETWEEN DATETIME(DATE_TRUNC(DATE_SUB(CURRENT_DATE(), INTERVAL 14 MONTH), MONTH)) AND CURRENT_DATE() ;;
-  conditionally_filter: {
-    filters: [meta_data.date_granularity: "Monthly"]
-    unless: [date_granularity]
-  }
   label: "Partnership - Country Data"
   view_label: "Partnership - Country Level"
   persist_with: central_dwh_orders
@@ -206,9 +202,9 @@ explore: cpg_meta_data {
 
 explore: brand_level {
   sql_always_where: ${order_raw} BETWEEN DATETIME(DATE_TRUNC(DATE_SUB(CURRENT_DATE(), INTERVAL 14 MONTH), MONTH)) AND CURRENT_DATE() ;;
-  always_filter: {
-    filters: [brand_level.date_granularity: "Monthly"]
-  }
+  # always_filter: {
+  #   filters: [brand_level.date_granularity: "Monthly"]
+  # }
   label: "Partnership - Brand Level"
   view_label: "Partnership - Brand Level"
   persist_with: central_dwh_orders
@@ -232,9 +228,9 @@ explore: brand_level {
 
 explore: brand_level_split {
   sql_always_where: ${order_raw} BETWEEN DATETIME(DATE_TRUNC(DATE_SUB(CURRENT_DATE(), INTERVAL 14 MONTH), MONTH)) AND CURRENT_DATE() ;;
-  always_filter: {
-    filters: [brand_level_split.date_granularity: "Monthly"]
-  }
+  # always_filter: {
+  #   filters: [brand_level_split.date_granularity: "Monthly"]
+  # }
   label: "Partnership - Brand Level (With Option/Upselling)"
   view_label: "Partnership - Brand Level (With Option/Upselling)"
   persist_with: central_dwh_orders

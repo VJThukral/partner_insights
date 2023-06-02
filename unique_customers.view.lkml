@@ -59,7 +59,7 @@ view: unique_customers {
   dimension: date {
     order_by_field: order_month
     group_label: "Date Dimension"
-    sql: format_datetime('%b %y',${TABLE}.report_period);;
+    sql: ${order_month};;
   }
 
   dimension: granularity {

@@ -1,117 +1,63 @@
 view: product_level {
 label: "product_level"
   derived_table: {
-    sql:SELECT
-    opa.period_seg,
-    opa.global_entity_id,
-    opa.country_name,
-    opa.report_period,
-    opa.city_group,
-    opa.category_group_global,
-    opa.is_key_account,
-    opa.store_type_group,
-    opa.product_company_market,
-    opa.product_company,
-    opa.product_type,
-    opa.product_subtype,
-    opa.product_name,
-    opa.product_size_numeral,
-    opa.product_size_unit,
-    opa.is_option,
-    opa.is_upsell,
-    vendors AS restaurants,
-    opa.orders,
-    opa.quantity,
-    opa.total_price_lc,
-    opa.total_price_eur,
-    FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_product_level` AS opa
-
-    UNION ALL
-
-
-    SELECT
-    opa.period_seg,
-    "Test" AS global_entity_id,
-    "Test" AS country_name,
-    opa.report_period,
-    "Test" AS city_group,
-    "Test" AS category_group_global,
-    opa.is_key_account,
-    opa.store_type_group,
-    product_company_market,
-    "Test" AS product_company,
-    "Test" AS product_type,
-    "Test" AS product_subtype,
-    "Test A" AS product_name,
-    "Test" AS product_size_numeral,
-    "Test" AS product_size_unit,
-    opa.is_option,
-    opa.is_upsell,
-    vendors AS restaurants,
-    opa.orders,
-    opa.quantity,
-    opa.total_price_lc,
-    opa.total_price_eur,
-    FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_product_level` AS opa
-    WHERE global_entity_id IN ('FP_SG',"MJM_AT","DJ_CZ")
-    AND product_company IN ('Coca Cola')
-
-    UNION ALL
-
-
-    SELECT
-    opa.period_seg,
-    "Test" AS global_entity_id,
-    "Test" AS country_name,
-    opa.report_period,
-    "Test" AS city_group,
-    "Test" AS category_group_global,
-    opa.is_key_account,
-    opa.store_type_group,
-    product_company_market,
-    "Test" AS product_company,
-    "Test" AS product_type,
-    "Test" AS product_subtype,
-    "Test B" AS product_name,
-    "Test" AS product_size_numeral,
-    "Test" AS product_size_unit,
-    opa.is_option,
-    opa.is_upsell,
-    vendors AS restaurants,
-    opa.orders,
-    opa.quantity,
-    opa.total_price_lc,
-    opa.total_price_eur,
-    FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_product_level` AS opa
-    WHERE global_entity_id IN ('FP_SG',"MJM_AT","DJ_CZ")
-    AND product_company IN ('Redbull','AB Inbev')
+    sql:
+    SELECT ii.*
+    FROM
+    {% if product_size._is_filtered %}
+    ${product_level_daily.SQL_TABLE_NAME} ii --product-level: brand + size information
+    {% elsif (product_name._is_filtered or product_subtype._is_filtered) and (upselling._is_filtered or product_type._is_filtered) %}
+    ${brand_level_split.SQL_TABLE_NAME} ii --brand split
+    {% elsif product_name._is_filtered or product_subtype._is_filtered %}
+    ${brand_level_all.SQL_TABLE_NAME} ii --brand all
+    {% elsif (upselling._is_filtered or product_type._is_filtered) %}
+    ${company_level_split.SQL_TABLE_NAME} ii --company split
+    {% else %}  --company level
+    ${company_level_all.SQL_TABLE_NAME} ii
+    {% endif %}
+    WHERE ii.period_seg = "Daily" ---With this tablle, all metrics under this are aggregated from daily to weekly/monthly
     ;;
+  }
 
-    sql_trigger_value: SELECT MAX(report_period) FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_order_level`  ;;
-    partition_keys: ["report_period"]
-    cluster_keys: ["period_seg","global_entity_id","product_company"]
-    }
-
-
-  dimension: date_granularity {
-    type: string
-    sql: ${TABLE}.period_seg ;;
+  parameter: date_granularity {#Used only for aggregatable metrics to rollup different time granularity
+    type: unquoted
+    allowed_value: { value: "Monthly" }
+    allowed_value: { value: "Weekly" }
+    allowed_value: { value: "Daily" }
+    default_value: "Monthly"
   }
 
   dimension: date {
-    order_by_field: order_date
-    group_label: "Date Dimension"
     sql:
-    CASE
-      WHEN ${date_granularity} = 'Daily'
-        THEN ${date_string}
-      WHEN ${date_granularity} = 'Weekly'
-        THEN ${order_week}
-      WHEN ${date_granularity} = 'Monthly'
-        THEN format_datetime('%b %y',${TABLE}.report_period)
-      ELSE NULL
-    END ;;
+      {% if date_granularity._parameter_value == 'Daily' %}
+        ${order_date}
+      {% elsif date_granularity._parameter_value == 'Monthly' %}
+        ${order_month}
+      {% else %}
+        ${order_week}
+      {% endif %};;
   }
+
+
+  # dimension: date_granularity {
+  #   type: string
+  #   sql: ${TABLE}.period_seg ;;
+  # }
+
+  # dimension: date {
+  #   order_by_field: order_date
+  #   group_label: "Date Dimension"
+  #   sql:
+  #   CASE
+  #     WHEN ${date_granularity} = 'Daily'
+  #       THEN ${date_string}
+  #     WHEN ${date_granularity} = 'Weekly'
+  #       THEN ${order_week}
+  #     WHEN ${date_granularity} = 'Monthly'
+  #       THEN format_datetime('%b %y',${TABLE}.report_period)
+  #     ELSE NULL
+  #   END ;;
+  # }
 
   dimension_group: order {
     #convert_tz: no
@@ -135,10 +81,10 @@ label: "product_level"
     sql: ${TABLE}.report_period ;;
   }
 
-  dimension: date_string {
-    type: string
-    sql: CAST(${TABLE}.report_period as string) ;;
-  }
+  # dimension: date_string {
+  #   type: string
+  #   sql: CAST(${TABLE}.report_period as string) ;;
+  # }
 
   parameter: currency_picker {
     type: string

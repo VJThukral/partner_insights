@@ -1,49 +1,70 @@
 view: product_level_2 {
   label: "Market Share"
-  derived_table: {
-    sql: SELECT ii.*,
-              cast(DATE(DATE_TRUNC(ii.report_period, WEEK)) as string) as Week_string
-      FROM
-      {% if date_granularity._parameter_value == "'Daily'" %}
-        ${market_share_daily.SQL_TABLE_NAME} ii
-      {% elsif date_granularity._parameter_value == "'Monthly'" %}
-        ${market_share_monthly.SQL_TABLE_NAME} ii
-      {% elsif date_granularity._parameter_value == "'Weekly'" %}
-        ${market_share_weekly.SQL_TABLE_NAME} ii
-      {% endif %}
-  ;;
-  }
+  sql_table_name: ${market_share_daily.SQL_TABLE_NAME} ;;
+  # derived_table: {
+  #   sql: SELECT ii.*,
+  #             cast(DATE(DATE_TRUNC(ii.report_period, WEEK)) as string) as Week_string
+  #     FROM
+  #     {% if date_granularity._parameter_value == "'Daily'" %}
+  #       ${market_share_daily.SQL_TABLE_NAME} ii
+  #     {% elsif date_granularity._parameter_value == "'Monthly'" %}
+  #       ${market_share_monthly.SQL_TABLE_NAME} ii
+  #     {% elsif date_granularity._parameter_value == "'Weekly'" %}
+  #       ${market_share_weekly.SQL_TABLE_NAME} ii
+  #     {% endif %}
+  # ;;
+  # }
 
+  parameter: date_granularity {#Used only for aggregatable metrics to rollup different time granularity
+    type: unquoted
+    allowed_value: { value: "Monthly" }
+    allowed_value: { value: "Weekly" }
+    allowed_value: { value: "Daily" }
+    default_value: "Monthly"
+  }
 
   dimension: date {
-    label_from_parameter: date_granularity
-    order_by_field: Choosing_sorting
     sql:
-    CASE
-      WHEN {% parameter date_granularity %} = 'Daily'
-        THEN ${date_string}
-      WHEN {% parameter date_granularity %} = 'Weekly'
-        THEN ${order_week}
-      WHEN {% parameter date_granularity %} = 'Monthly'
-        THEN format_datetime('%b %y',${TABLE}.report_period)
-      ELSE NULL
-    END ;;
+      {% if date_granularity._parameter_value == 'Daily' %}
+        ${order_date}
+      {% elsif date_granularity._parameter_value == 'Monthly' %}
+        ${order_month}
+      {% else %}
+        ${order_week}
+      {% endif %};;
   }
 
-  dimension: Choosing_sorting {
-    label_from_parameter: date_granularity
-    hidden: yes
-    sql:
-    CASE
-      WHEN {% parameter date_granularity %} = 'Daily'
-        THEN DATE_TRUNC(${TABLE}.report_period,DAY)
-      WHEN {% parameter date_granularity %} = 'Weekly'
-        THEN DATE_TRUNC(${TABLE}.report_period,WEEK)
-      WHEN {% parameter date_granularity %} = 'Monthly'
-        THEN DATE_TRUNC(${TABLE}.report_period,MONTH)
-      ELSE NULL
-    END ;;
-  }
+
+
+  # dimension: date {
+  #   label_from_parameter: date_granularity
+  #   order_by_field: Choosing_sorting
+  #   sql:
+  #   CASE
+  #     WHEN {% parameter date_granularity %} = 'Daily'
+  #       THEN ${date_string}
+  #     WHEN {% parameter date_granularity %} = 'Weekly'
+  #       THEN ${order_week}
+  #     WHEN {% parameter date_granularity %} = 'Monthly'
+  #       THEN format_datetime('%b %y',${TABLE}.report_period)
+  #     ELSE NULL
+  #   END ;;
+  # }
+
+  # dimension: Choosing_sorting {
+  #   label_from_parameter: date_granularity
+  #   hidden: yes
+  #   sql:
+  #   CASE
+  #     WHEN {% parameter date_granularity %} = 'Daily'
+  #       THEN DATE_TRUNC(${TABLE}.report_period,DAY)
+  #     WHEN {% parameter date_granularity %} = 'Weekly'
+  #       THEN DATE_TRUNC(${TABLE}.report_period,WEEK)
+  #     WHEN {% parameter date_granularity %} = 'Monthly'
+  #       THEN DATE_TRUNC(${TABLE}.report_period,MONTH)
+  #     ELSE NULL
+  #   END ;;
+  # }
 
   dimension_group: order {
     #convert_tz: no
@@ -67,23 +88,23 @@ view: product_level_2 {
     sql: ${TABLE}.report_period ;;
   }
 
-  dimension: date_string {
-    type: string
-    sql: ${TABLE}.date_string ;;
-  }
+  # dimension: date_string {
+  #   type: string
+  #   sql: ${TABLE}.date_string ;;
+  # }
 
-  dimension: week_string {
-    type: string
-    sql: ${TABLE}.Week_string ;;
-  }
+  # dimension: week_string {
+  #   type: string
+  #   sql: ${TABLE}.Week_string ;;
+  # }
 
 
-  parameter: date_granularity {
-    type: string
-    allowed_value: { value: "Daily" }
-    allowed_value: { value: "Monthly" }
-    allowed_value: { value: "Weekly" }
-  }
+  # parameter: date_granularity {
+  #   type: string
+  #   allowed_value: { value: "Daily" }
+  #   allowed_value: { value: "Monthly" }
+  #   allowed_value: { value: "Weekly" }
+  # }
 
   dimension: unique_key {
     hidden: yes
