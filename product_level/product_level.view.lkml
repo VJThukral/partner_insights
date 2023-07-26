@@ -200,32 +200,28 @@ label: "product_level"
     sql: ${TABLE}.store_type_group ;;
   }
 
-  dimension: is_option{
-    group_label: "Business Line"
-    type: yesno
-    sql: ${TABLE}.is_option ;;
-  }
+  # dimension: is_option{
+  #   group_label: "Business Line"
+  #   type: yesno
+  #   sql: ${TABLE}.product_option ;;
+  # }
 
-  dimension: is_upsell{
-    group_label: "Business Line"
-    type: yesno
-    sql: ${TABLE}.is_upsell ;;
-  }
+  # dimension: is_upsell{
+  #   group_label: "Business Line"
+  #   type: yesno
+  #   sql: ${TABLE}.product_upsell ;;
+  # }
 
   dimension: product_type {
     group_label: "Product"
     type: string
-    sql: CASE WHEN ${is_option} IS TRUE THEN 'Option'
-              ELSE 'Product'
-              END;;
+    sql: ${TABLE}.product_option;;
   }
 
   dimension: upselling {
     group_label: "Product"
     type: string
-    sql: CASE WHEN ${is_upsell} IS TRUE THEN 'With Upselling'
-              ELSE 'Without Upselling'
-              END;;
+    sql: ${TABLE}.product_upsell;;
   }
 
 
