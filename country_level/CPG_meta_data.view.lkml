@@ -58,7 +58,7 @@ view: cpg_meta_data {
       , SUM(successful_orders)       as orders
       , SUM(value.GMV_eur)        as total_GMV_eur
       , SUM(value.GMV_local)        as total_GMV_local
-      FROM `fulfillment-dwh-staging.curated_data_shared_coredata_business.agg_vendor_kpis_daily`
+      FROM `fulfillment-dwh-production.curated_data_shared_coredata_business.agg_vendor_kpis_daily`
       WHERE report_date BETWEEN DATE_SUB(DATE_TRUNC(DATE_SUB(CURRENT_DATE(), INTERVAL 15 MONTH), MONTH), INTERVAL 1 DAY) AND DATE_ADD(DATETIME(CURRENT_DATE()), INTERVAL 1 DAY)
       GROUP BY 1,2,3
       ),
@@ -71,7 +71,7 @@ view: cpg_meta_data {
       , SUM(successful_orders)       as orders
       , SUM(value.GMV_eur)        as total_GMV_eur
       , SUM(value.GMV_local)        as total_GMV_local
-      FROM `fulfillment-dwh-staging.curated_data_shared_coredata_business.agg_vendor_kpis_daily`
+      FROM `fulfillment-dwh-production.curated_data_shared_coredata_business.agg_vendor_kpis_daily`
       WHERE report_date BETWEEN DATE_SUB(DATE_TRUNC(DATE_SUB(CURRENT_DATE(), INTERVAL 15 MONTH), MONTH), INTERVAL 1 DAY) AND DATE_ADD(DATETIME(CURRENT_DATE()), INTERVAL 1 DAY)
       GROUP BY 1,2,3
       )
@@ -90,7 +90,7 @@ view: cpg_meta_data {
       value.GMV_eur        as total_GMV_eur,
       value.GMV_local        as total_GMV_local
       FROM CPG_vendors_daily AS cpg
-      INNER JOIN `fulfillment-dwh-staging.curated_data_shared_coredata_business.agg_vendor_kpis_daily` AS vendor
+      INNER JOIN `fulfillment-dwh-production.curated_data_shared_coredata_business.agg_vendor_kpis_daily` AS vendor
       ON cpg.global_entity_id = vendor.global_entity_id
       AND cpg.vendor_id = vendor.vendor_id
       AND cpg.report_period = vendor.report_date
