@@ -15,49 +15,49 @@ label: "product_level"
     {% else %}  --company level
     ${company_level_all.SQL_TABLE_NAME} ii
     {% endif %}
-    WHERE ii.period_seg = "Daily" ---With this tablle, all metrics under this are aggregated from daily to weekly/monthly
+    WHERE {% condition date_granularity %} period_seg {% endcondition %} ---With this tablle, all metrics under this are aggregated from daily to weekly/monthly
     ;;
   }
 
-  parameter: date_granularity {#Used only for aggregatable metrics to rollup different time granularity
-    type: unquoted
-    allowed_value: { value: "Monthly" }
-    allowed_value: { value: "Weekly" }
-    allowed_value: { value: "Daily" }
-    default_value: "Monthly"
-  }
-
-  dimension: date {
-    sql:
-      {% if date_granularity._parameter_value == 'Daily' %}
-        ${order_date}
-      {% elsif date_granularity._parameter_value == 'Monthly' %}
-        ${order_month}
-      {% else %}
-        ${order_week}
-      {% endif %};;
-  }
-
-
-  # dimension: date_granularity {
-  #   type: string
-  #   sql: ${TABLE}.period_seg ;;
+  # parameter: date_granularity {#Used only for aggregatable metrics to rollup different time granularity
+  #   type: unquoted
+  #   allowed_value: { value: "Monthly" }
+  #   allowed_value: { value: "Weekly" }
+  #   allowed_value: { value: "Daily" }
+  #   default_value: "Monthly"
   # }
 
   # dimension: date {
-  #   order_by_field: order_date
-  #   group_label: "Date Dimension"
   #   sql:
-  #   CASE
-  #     WHEN ${date_granularity} = 'Daily'
-  #       THEN ${date_string}
-  #     WHEN ${date_granularity} = 'Weekly'
-  #       THEN ${order_week}
-  #     WHEN ${date_granularity} = 'Monthly'
-  #       THEN format_datetime('%b %y',${TABLE}.report_period)
-  #     ELSE NULL
-  #   END ;;
+  #     {% if date_granularity._parameter_value == 'Daily' %}
+  #       ${order_date}
+  #     {% elsif date_granularity._parameter_value == 'Monthly' %}
+  #       ${order_month}
+  #     {% else %}
+  #       ${order_week}
+  #     {% endif %};;
   # }
+
+
+  dimension: date_granularity {
+    type: string
+    sql: ${TABLE}.period_seg ;;
+  }
+
+  dimension: date {
+    order_by_field: order_date
+    group_label: "Date Dimension"
+    sql:
+    CASE
+      WHEN ${date_granularity} = 'Daily'
+        THEN CAST(${order_date} AS STRING)
+      WHEN ${date_granularity} = 'Weekly'
+        THEN CAST(${order_week} AS STRING)
+      WHEN ${date_granularity} = 'Monthly'
+        THEN CAST(${order_month} AS STRING)
+      ELSE NULL
+    END ;;
+  }
 
   dimension_group: order {
     #convert_tz: no

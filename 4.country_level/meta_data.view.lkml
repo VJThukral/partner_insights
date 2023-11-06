@@ -22,11 +22,7 @@ view: meta_data {
         FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_metadata`
         WHERE global_entity_id IN ('FP_SG',"MJM_AT","DJ_CZ",'FP_MY',"FP_MM")
         )
-    WHERE {% if aggregation_level._parameter_value == "'Aggregatable'" %}
-      period_seg = "Daily" ---With this tablle, all metrics under this are aggregated from daily to weekly/monthly
-      {% else %}
-      1 = 1 ---With this tablle, all metrics under this are non-aggregated, has to use period_seg to hit the pre-cal in BQ
-      {% endif %}
+    WHERE {% condition date_granularity %} period_seg {% endcondition %}
           ;;
   }
 
@@ -35,42 +31,62 @@ view: meta_data {
     sql: ${TABLE}.period_seg ;;
   }
 
-  parameter: aggregation_level {
-    type: string
-    allowed_value: { value: "Aggregatable" }
-    allowed_value: { value: "Non-Aggregatable" } ###Must use this together with period_seg dim whenever reporting any non-agg metric such as vendor and customer count
-    default_value: "Aggregatable"
-  }
+  # parameter: aggregation_level {
+  #   type: string
+  #   allowed_value: { value: "Aggregatable" }
+  #   allowed_value: { value: "Non-Aggregatable" } ###Must use this together with period_seg dim whenever reporting any non-agg metric such as vendor and customer count
+  #   default_value: "Aggregatable"
+  # }
 
-  parameter: date_granularity {#Used only for aggregatable metrics to rollup different time granularity
-    type: unquoted
-    allowed_value: { value: "Monthly" }
-    allowed_value: { value: "Weekly" }
-    allowed_value: { value: "Daily" }
-    default_value: "Monthly"
-  }
+  # parameter: date_granularity {#Used only for aggregatable metrics to rollup different time granularity
+  #   type: unquoted
+  #   allowed_value: { value: "Monthly" }
+  #   allowed_value: { value: "Weekly" }
+  #   allowed_value: { value: "Daily" }
+  #   default_value: "Monthly"
+  # }
 
-  dimension: date_string {
+  # dimension: date_string {
+  #   type: string
+  #   sql: CAST(${TABLE}.report_period as string) ;;
+  # }
+
+  # dimension: date {
+  #   sql:---For Non-Aggregatable metrics like customers and vendor count
+  #     {% if period_seg._value == 'Daily' and aggregation_level._parameter_value == "'Non-Aggregatable'"  %}
+  #       ${date_string}
+  #     {% elsif period_seg._value == 'Weekly' and aggregation_level._parameter_value == "'Non-Aggregatable'" %}
+  #       ${order_week}
+  #     {% elsif period_seg._value == 'Monthly' and aggregation_level._parameter_value == "'Non-Aggregatable'" %}
+  #       ${order_month}
+  #   ---For Aggregatable metrics
+  #     {% elsif date_granularity._parameter_value == 'Daily' %}
+  #       ${order_date}
+  #     {% elsif date_granularity._parameter_value == 'Monthly' %}
+  #       ${order_month}
+  #     {% elsif date_granularity._parameter_value == 'Weekly' %}
+  #       ${order_week}
+  #     {% endif %};;
+  # }
+
+  dimension: date_granularity {
     type: string
-    sql: CAST(${TABLE}.report_period as string) ;;
+    sql: ${TABLE}.period_seg ;;
   }
 
   dimension: date {
-    sql:---For Non-Aggregatable metrics like customers and vendor count
-      {% if period_seg._value == 'Daily' and aggregation_level._parameter_value == "'Non-Aggregatable'"  %}
-        ${date_string}
-      {% elsif period_seg._value == 'Weekly' and aggregation_level._parameter_value == "'Non-Aggregatable'" %}
-        ${order_week}
-      {% elsif period_seg._value == 'Monthly' and aggregation_level._parameter_value == "'Non-Aggregatable'" %}
-        ${order_month}
-    ---For Aggregatable metrics
-      {% elsif date_granularity._parameter_value == 'Daily' %}
-        ${order_date}
-      {% elsif date_granularity._parameter_value == 'Monthly' %}
-        ${order_month}
-      {% elsif date_granularity._parameter_value == 'Weekly' %}
-        ${order_week}
-      {% endif %};;
+    order_by_field: order_date
+    group_label: "Date Dimension"
+    sql:
+    CASE
+      WHEN ${date_granularity} = 'Daily'
+        THEN CAST(${order_date} AS STRING)
+      WHEN ${date_granularity} = 'Weekly'
+        THEN CAST(${order_week} AS STRING)
+      WHEN ${date_granularity} = 'Monthly'
+        THEN CAST(${order_month} AS STRING)
+      ELSE NULL
+    END ;;
   }
 
   dimension_group: order {
