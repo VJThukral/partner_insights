@@ -47,7 +47,7 @@ explore: product_level {
 explore: product_level_daily {
   sql_always_where: ${order_raw} BETWEEN DATETIME(DATE_TRUNC(DATE_SUB(CURRENT_DATE(), INTERVAL 14 MONTH), MONTH)) AND CURRENT_DATE() ;;
   always_filter: {
-    filters: [,product_level_daily.product_company: "-Test"]
+    filters: [product_level_daily.period_seg: "Daily" ,product_level_daily.product_company: "-Test"]
   }
 
   label: "Partnership - Product Level Daily"
