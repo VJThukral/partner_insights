@@ -96,37 +96,37 @@ view: company_level_split {
     SELECT *
     FROM company_split_consolidated
 
-    UNION ALL
-
-    SELECT
-      period_seg,
-      "Test" AS global_entity_id,
-      "Test" AS country_name,
-      report_period,
-      "Test" AS city_group,
-      "Test" AS category_group_global,
-      is_key_account,
-      store_type_group,
-      "Test" AS product_company_market,
-      "Test" AS product_company,
-      "" AS product_type,
-      "" AS product_subtype,
-      "" AS product_name,
-      product_option,
-      product_upsell,
-      customers,
-      vendors,
-      orders,
-      quantity,
-      total_price_lc,
-      total_price_eur
-    FROM company_split_consolidated
-    WHERE global_entity_id IN ('FP_SG',"MJM_AT")
-    AND product_company IN ('Coca Cola')
-
       ;;
     sql_trigger_value: SELECT MAX(report_period) FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_order_level`  ;;
     partition_keys: ["report_period"]
     cluster_keys: ["period_seg","global_entity_id","product_company"]
   }
 }
+
+    # UNION ALL
+
+    # SELECT
+    #   period_seg,
+    #   "Test" AS global_entity_id,
+    #   "Test" AS country_name,
+    #   report_period,
+    #   "Test" AS city_group,
+    #   "Test" AS category_group_global,
+    #   is_key_account,
+    #   store_type_group,
+    #   "Test" AS product_company_market,
+    #   "Test" AS product_company,
+    #   "" AS product_type,
+    #   "" AS product_subtype,
+    #   "" AS product_name,
+    #   product_option,
+    #   product_upsell,
+    #   customers,
+    #   vendors,
+    #   orders,
+    #   quantity,
+    #   total_price_lc,
+    #   total_price_eur
+    # FROM company_split_consolidated
+    # WHERE global_entity_id IN ('FP_SG',"MJM_AT")
+    # AND product_company IN ('Coca Cola')

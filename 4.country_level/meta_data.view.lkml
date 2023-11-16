@@ -6,21 +6,21 @@ view: meta_data {
         "Others" AS product_company,
         FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_metadata`
 
-        UNION ALL
+        --UNION ALL
 
-        SELECT period_seg,
-            "Test" AS global_entity_id,
-            "Test" AS country_name,
-            report_period,
-            "Test" AS city_group,
-            "Test" AS category_group_global,
-            is_key_account,
-            store_type_group,
-            vendors,
-            orders,
-            "Others" AS product_company,
-        FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_metadata`
-        WHERE global_entity_id IN ('FP_SG',"MJM_AT","DJ_CZ",'FP_MY',"FP_MM")
+        --SELECT period_seg,
+            --"Test" AS global_entity_id,
+            --"Test" AS country_name,
+            --report_period,
+            --"Test" AS city_group,
+            --"Test" AS category_group_global,
+            --is_key_account,
+            --store_type_group,
+            --vendors,
+            --orders,
+            --"Others" AS product_company,
+        --FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_metadata`
+        --WHERE global_entity_id IN ('FP_SG',"MJM_AT","DJ_CZ",'FP_MY',"FP_MM")
         )
     WHERE {% condition date_granularity %} period_seg {% endcondition %}
           ;;

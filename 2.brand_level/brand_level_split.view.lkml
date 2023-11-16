@@ -1,42 +1,43 @@
 view: brand_level_split {
-  derived_table: {
-    sql:
-      SELECT *
-      FROM fulfillment-dwh-production.rl_sales_revenue.partnerships_brand_level
+  sql_table_name: `fulfillment-dwh-production.rl_sales_revenue.partnerships_brand_level` ;;
+  # derived_table: {
+  #   sql:
+  #     SELECT *
+  #     FROM fulfillment-dwh-production.rl_sales_revenue.partnerships_brand_level
 
-      UNION ALL --- ADDING TEST DATA FOR EXPLORING PURPOSE
+  #     UNION ALL --- ADDING TEST DATA FOR EXPLORING PURPOSE
 
-      SELECT
-          period_seg,
-          "Test" AS global_entity_id,
-          "Test" AS country_name,
-          report_period,
-          "Test" AS city_group,
-          "Test" AS category_group_global,
-          is_key_account,
-          store_type_group,
-          "Test" AS product_company_market,
-          "Test" AS product_company,
-          "Test" AS product_type,
-          "Test" AS product_subtype,
-          "Test" AS product_name,
-          CASE WHEN is_option IS TRUE THEN "Option" ELSE "Product" END AS product_option,
-          CASE WHEN is_upsell IS TRUE THEN 'With Upselling' ELSE 'Without Upselling' END AS product_upsell,
-          customers,
-          vendors AS restaurants,
-          orders,
-          quantity,
-          total_price_lc,
-          total_price_eur
-      FROM fulfillment-dwh-production.rl_sales_revenue.partnerships_product_level
-      WHERE global_entity_id IN ('FP_SG',"MJM_AT")
-      AND product_company IN ('Coca Cola')
+  #     SELECT
+  #         period_seg,
+  #         "Test" AS global_entity_id,
+  #         "Test" AS country_name,
+  #         report_period,
+  #         "Test" AS city_group,
+  #         "Test" AS category_group_global,
+  #         is_key_account,
+  #         store_type_group,
+  #         "Test" AS product_company_market,
+  #         "Test" AS product_company,
+  #         "Test" AS product_type,
+  #         "Test" AS product_subtype,
+  #         "Test" AS product_name,
+  #         CASE WHEN is_option IS TRUE THEN "Option" ELSE "Product" END AS product_option,
+  #         CASE WHEN is_upsell IS TRUE THEN 'With Upselling' ELSE 'Without Upselling' END AS product_upsell,
+  #         customers,
+  #         vendors AS restaurants,
+  #         orders,
+  #         quantity,
+  #         total_price_lc,
+  #         total_price_eur
+  #     FROM fulfillment-dwh-production.rl_sales_revenue.partnerships_product_level
+  #     WHERE global_entity_id IN ('FP_SG',"MJM_AT")
+  #     AND product_company IN ('Coca Cola')
 
-      ;;
-    sql_trigger_value: SELECT MAX(report_period) FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_order_level`  ;;
-    partition_keys: ["report_period"]
-    cluster_keys: ["period_seg","global_entity_id","product_company"]
-  }
+  #     ;;
+  #   sql_trigger_value: SELECT MAX(report_period) FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_order_level`  ;;
+  #   partition_keys: ["report_period"]
+  #   cluster_keys: ["period_seg","global_entity_id","product_company"]
+  # }
 
   dimension: date_granularity {
     type: string

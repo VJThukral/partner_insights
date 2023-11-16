@@ -63,56 +63,6 @@ view: market_share_daily {
     --This is for dummy data purpose
     SELECT market_share.*
     FROM market_share
-
-    UNION ALL
-
-    SELECT opa.period_seg,
-          CAST(report_period as string) as date_string,
-          opa.report_period,
-          'Test' AS global_entity_id,
-          "Test" AS country_name,
-          "Test" AS city_group,
-          "Test" AS category_group_global,
-          opa.is_key_account,
-          opa.store_type_group,
-          "Test" AS product_company,
-          opa.product_company_market,
-          opa.product_option,
-          opa.product_upsell,
-          SUM(opa.quantity) AS quantity,
-          SUM(opa.total_price_lc) AS total_price_lc ,
-          SUM(opa.total_price_eur) AS total_price_eur ,
-          "Test" AS product_company_filter
-    FROM market_share AS opa
-    WHERE global_entity_id IN ('FP_SG',"MJM_AT","DJ_CZ")
-    AND product_company_filter = 'Coca Cola'
-    AND product_company = 'Coca Cola'
-    GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,17
-
-    UNION ALL
-
-    SELECT opa.period_seg,
-          CAST(report_period as string) as date_string,
-          opa.report_period,
-          'Test' AS global_entity_id,
-          "Test" AS country_name,
-          "Test" AS city_group,
-          "Test" AS category_group_global,
-          opa.is_key_account,
-          opa.store_type_group,
-          "Others" AS product_company,
-          opa.product_company_market,
-          opa.product_option,
-          opa.product_upsell,
-          SUM(opa.quantity) AS quantity,
-          SUM(opa.total_price_lc) AS total_price_lc ,
-          SUM(opa.total_price_eur) AS total_price_eur ,
-          "Test" AS product_company_filter
-    FROM market_share AS opa
-    WHERE global_entity_id IN ('FP_SG',"MJM_AT","DJ_CZ",'FP_MY',"FP_MM")
-    AND product_company_filter = 'Coca Cola'
-    AND product_company != 'Coca Cola'
-    GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,17
       ;;
 
     datagroup_trigger: central_dwh_orders
@@ -120,3 +70,53 @@ view: market_share_daily {
     cluster_keys: ["global_entity_id","product_company"]
   }
 }
+
+# UNION ALL
+
+#     SELECT opa.period_seg,
+#           CAST(report_period as string) as date_string,
+#           opa.report_period,
+#           'Test' AS global_entity_id,
+#           "Test" AS country_name,
+#           "Test" AS city_group,
+#           "Test" AS category_group_global,
+#           opa.is_key_account,
+#           opa.store_type_group,
+#           "Test" AS product_company,
+#           opa.product_company_market,
+#           opa.product_option,
+#           opa.product_upsell,
+#           SUM(opa.quantity) AS quantity,
+#           SUM(opa.total_price_lc) AS total_price_lc ,
+#           SUM(opa.total_price_eur) AS total_price_eur ,
+#           "Test" AS product_company_filter
+#     FROM market_share AS opa
+#     WHERE global_entity_id IN ('FP_SG',"MJM_AT","DJ_CZ")
+#     AND product_company_filter = 'Coca Cola'
+#     AND product_company = 'Coca Cola'
+#     GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,17
+
+#     UNION ALL
+
+#     SELECT opa.period_seg,
+#           CAST(report_period as string) as date_string,
+#           opa.report_period,
+#           'Test' AS global_entity_id,
+#           "Test" AS country_name,
+#           "Test" AS city_group,
+#           "Test" AS category_group_global,
+#           opa.is_key_account,
+#           opa.store_type_group,
+#           "Others" AS product_company,
+#           opa.product_company_market,
+#           opa.product_option,
+#           opa.product_upsell,
+#           SUM(opa.quantity) AS quantity,
+#           SUM(opa.total_price_lc) AS total_price_lc ,
+#           SUM(opa.total_price_eur) AS total_price_eur ,
+#           "Test" AS product_company_filter
+#     FROM market_share AS opa
+#     WHERE global_entity_id IN ('FP_SG',"MJM_AT","DJ_CZ",'FP_MY',"FP_MM")
+#     AND product_company_filter = 'Coca Cola'
+#     AND product_company != 'Coca Cola'
+#     GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,17
