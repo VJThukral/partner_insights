@@ -4,7 +4,7 @@ label: "product_level"
     sql:
     SELECT ii.*
     FROM
-    {% if product_size._is_filtered or product_size_numeral._is_filtered%}
+    {% if product_size._is_filtered or product_size_numeral._is_filtered %}
     ${product_level_daily.SQL_TABLE_NAME} ii --product-level: brand + size information
     {% elsif (product_name._is_filtered or product_subtype._is_filtered) and (upselling._is_filtered or product_type._is_filtered) %}
     ${brand_level_split.SQL_TABLE_NAME} ii --brand split
