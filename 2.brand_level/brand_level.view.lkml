@@ -217,6 +217,11 @@ view: brand_level {
     sql: ${TABLE}.store_type_group ;;
   }
 
+  dimension: category_group_global {
+    type: string
+    sql: ${TABLE}.category_group_global ;;
+  }
+
   measure: total_customers {
     label: "Distinct Customers"
     description: "Distinct count of analytical_customer_id. NOTE: this can be very slow to calculate with many dimensions over long periods of time."

@@ -125,6 +125,11 @@ view: meta_data {
     sql: ${TABLE}.country_name ;;
   }
 
+  dimension: category_group_global {
+    type: string
+    sql: ${TABLE}.category_group_global ;;
+  }
+
   dimension: product_company {
     type: string
     group_label: "Global Entity"

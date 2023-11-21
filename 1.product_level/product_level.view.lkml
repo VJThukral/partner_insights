@@ -271,7 +271,8 @@ label: "product_level"
     group_label: "Product"
     type: number
     sql:CASE WHEN ${TABLE}.product_size_numeral = "0" THEN NULL
-            WHEN ${TABLE}.quantity > 10 THEN ${TABLE}.product_size_numeral
+            WHEN CAST(${TABLE}.product_size_numeral AS NUMERIC) > 20000 THEN SAFE_DIVIDE(CAST(${TABLE}.product_size_numeral AS NUMERIC),100)
+            WHEN ${TABLE}.quantity > 10 THEN CAST(${TABLE}.product_size_numeral AS NUMERIC)
             ELSE NULL END;;
   }
 
