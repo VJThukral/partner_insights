@@ -141,8 +141,8 @@ explore: meta_data {
 }
 
 explore: cpg_meta_data {
-  label: "Partnership - Incidence Rate 2"
-  view_label: "Market Orders"
+  label: "Partnership - CPG Incidence Rate"
+  view_label: "CPG Market Orders"
   sql_always_where: ${order_raw} BETWEEN DATETIME(DATE_TRUNC(DATE_SUB(CURRENT_DATE(), INTERVAL 14 MONTH), MONTH)) AND CURRENT_DATE() ;;
   conditionally_filter: {
     filters: [cpg_meta_data.date_granularity: "Monthly"]
@@ -208,6 +208,15 @@ explore: brand_level {
   label: "Partnership - Brand Level"
   view_label: "Partnership - Brand Level"
   persist_with: central_dwh_orders
+
+  join: top_10_cuisine {
+    view_label: "Top 10 Cuisine Type"
+    sql_on: ${top_10_cuisine.category_group_global} = ${brand_level.category_group_global}
+      ;;
+
+    type: inner
+    relationship: many_to_one
+  }
 
   access_filter: {
     field: store_type

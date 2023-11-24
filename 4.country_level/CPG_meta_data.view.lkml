@@ -9,13 +9,14 @@ view: cpg_meta_data {
         DATE_TRUNC(opa.report_period,MONTH) AS report_period,
         opa.city_group,
         opa.store_type_group,
+        opa.category_group_global,
         opa.vendor_id,
         opa.is_key_account,
         ARRAY_AGG(DISTINCT opa.product_company ORDER BY opa.product_company) AS CPG_list
       FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_order_level` AS opa
       WHERE opa.product_company != "Other"
       AND opa.product_company IS NOT NULL
-      GROUP BY 1,2,3,4,5,6,7
+      GROUP BY 1,2,3,4,5,6,7,8
       ),
 
       CPG_vendors_daily AS (
@@ -25,13 +26,14 @@ view: cpg_meta_data {
       DATE_TRUNC(opa.report_period,DAY) AS report_period,
       opa.city_group,
       opa.store_type_group,
+      opa.category_group_global,
       opa.vendor_id,
       opa.is_key_account,
       ARRAY_AGG(DISTINCT opa.product_company ORDER BY opa.product_company) AS CPG_list
       FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_order_level` AS opa
       WHERE opa.product_company != "Other"
       AND opa.product_company IS NOT NULL
-      GROUP BY 1,2,3,4,5,6,7
+      GROUP BY 1,2,3,4,5,6,7,8
       ),
 
       CPG_vendors_weekly AS (
@@ -41,13 +43,14 @@ view: cpg_meta_data {
       DATE_TRUNC(opa.report_period,WEEK(MONDAY)) AS report_period,
       opa.city_group,
       opa.store_type_group,
+      opa.category_group_global,
       opa.vendor_id,
       opa.is_key_account,
       ARRAY_AGG(DISTINCT opa.product_company ORDER BY opa.product_company) AS CPG_list
       FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_order_level` AS opa
       WHERE opa.product_company != "Other"
       AND opa.product_company IS NOT NULL
-      GROUP BY 1,2,3,4,5,6,7
+      GROUP BY 1,2,3,4,5,6,7,8
       ),
 
       vendors_weekly AS (
@@ -84,6 +87,7 @@ view: cpg_meta_data {
       city_group,
       CPG_list,
       store_type_group,
+      category_group_global,
       is_key_account,
       cpg.vendor_id,
       successful_orders       as orders,
@@ -106,6 +110,7 @@ view: cpg_meta_data {
       city_group,
       CPG_list,
       store_type_group,
+      category_group_global,
       is_key_account,
       cpg.vendor_id,
       orders,
@@ -127,6 +132,7 @@ view: cpg_meta_data {
       city_group,
       CPG_list,
       store_type_group,
+      category_group_global,
       is_key_account,
       cpg.vendor_id,
       orders,
@@ -246,6 +252,11 @@ view: cpg_meta_data {
   dimension: store_type {
     type: string
     sql: ${TABLE}.store_type_group ;;
+  }
+
+  dimension: category_group_global {
+    type: string
+    sql: ${TABLE}.category_group_global ;;
   }
 
 
