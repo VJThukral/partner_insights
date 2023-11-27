@@ -2,14 +2,17 @@ view: top_10_cuisine {
   label: ""
   derived_table: {
     explore_source: brand_level {
-      column: category_group_global {}
+      column: cuisine_comparitor {}
       column: total_order {}
       derived_column: rank { sql: rank() over (order by total_order desc);;}
       bind_all_filters: yes
       sort: { field: total_order desc: yes}
     }
   }
-  dimension: category_group_global {}
+
+  dimension: category_group_global {
+    sql: ${TABLE}.cuisine_comparitor ;;
+  }
   dimension: rank {
     type: number
   }
@@ -27,7 +30,8 @@ view: top_10_cuisine {
     order_by_field: cuisine_ranked_order
     type: string
     sql: case
-          when ${rank} <= 10 then ${category_group_global}
+        WHEN ${rank} <= 10
+          THEN ${category_group_global}
           else "Others"
           end;;
   }

@@ -167,6 +167,11 @@ view: brand_level_split {
     sql: ${TABLE}.product_name ;;
   }
 
+  dimension: category_group_global {
+    type: string
+    sql: ${TABLE}.category_group_global ;;
+  }
+
   filter: brand_selection {
     suggest_dimension: product_name
   }
@@ -174,6 +179,20 @@ view: brand_level_split {
   filter: product_subtype_filter {
     suggest_dimension: product_subtype
   }
+
+  filter: category_group_global_filter {
+    suggest_dimension: category_group_global
+  }
+  dimension: cuisine_comparitor {
+    type: string
+    sql:
+    CASE
+      WHEN {% condition category_group_global_filter %} ${category_group_global} {% endcondition %}
+        THEN ${category_group_global}
+      ELSE "Others"
+    END ;;
+  }
+
 
   dimension: brand_comparitor {
     type: string

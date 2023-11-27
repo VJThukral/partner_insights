@@ -211,7 +211,7 @@ explore: brand_level {
 
   join: top_10_cuisine {
     view_label: "Top 10 Cuisine Type"
-    sql_on: ${top_10_cuisine.category_group_global} = ${brand_level.category_group_global}
+    sql_on: ${top_10_cuisine.category_group_global} = ${brand_level.cuisine_comparitor}
       ;;
 
     type: inner

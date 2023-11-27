@@ -195,9 +195,36 @@ view: brand_level {
     suggest_dimension: brand_level.product_name
   }
 
+  filter: category_group_global_filter {
+    suggest_dimension: brand_level.category_group_global
+  }
+
   filter: product_subtype_filter {
     suggest_dimension: brand_level.product_subtype
   }
+
+  dimension: cuisine_comparitor {
+    order_by_field: cuisine_comparitor_order
+    type: string
+    sql:
+    CASE
+      WHEN {% condition category_group_global_filter %} ${category_group_global} {% endcondition %}
+        THEN ${category_group_global}
+      ELSE "Others"
+    END ;;
+  }
+
+  dimension: cuisine_comparitor_order {
+    hidden: yes
+    type: number
+    sql:
+    CASE
+      WHEN {% condition category_group_global_filter %} ${category_group_global} {% endcondition %}
+        THEN 1
+      ELSE 2
+    END ;;
+  }
+
 
   dimension: brand_comparitor {
     type: string
