@@ -14,23 +14,6 @@ view: unique_customers {
         WHERE granularity = "Company"
 
         {% endif %}
-
-    UNION ALL
-
-    SELECT
-        granularity,
-        "Test" AS global_entity_id,
-        "Test" AS country_name,
-        "Test" AS city_group,
-        report_period,
-        "Test" AS product_company,
-        "Test" AS product_name,
-        store_type_group,
-        customers,
-        new_customers
-    FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_company_monthly_stats`
-    WHERE global_entity_id IN ('FP_SG',"MJM_AT")
-    AND product_company IN ('Coca Cola')
     ;;
   }
 

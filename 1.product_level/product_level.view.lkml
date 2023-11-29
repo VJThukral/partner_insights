@@ -294,15 +294,15 @@ label: "product_level"
   }
 
   measure: total_customers {
-    label: "Distinct Customers"
+    label: "Customers"
     description: "Distinct count of analytical_customer_id. NOTE: this can be very slow to calculate with many dimensions over long periods of time."
-    type: count_distinct
-    sql: ${customer_id} ;;
+    type: sum
+    sql: ${TABLE}.customers ;;
     value_format_name: decimal_0
   }
 
   measure: total_vendors {
-    label: "Number of Total Vendors"
+    label: "Vendors"
     description: "Number of unique vendor ids with a successful order"
     type: sum
     sql: ${TABLE}.vendors ;;
@@ -310,23 +310,21 @@ label: "product_level"
   }
 
   measure: total_order {
-    description: "Only Successful Orders"
-    label: "Successful Orders"
+    label: "Orders"
     type:  sum
     sql: ${TABLE}.orders ;;
     value_format_name: decimal_0
   }
 
   measure: total_cat_quantity {
-    description: "Only Successful Orders"
-    label: "Total Category Volume"
+    label: "Units"
     type:  sum
     sql: CASE WHEN ${product_company} IS NOT NULL THEN ${TABLE}.quantity ELSE NULL END ;;
     value_format_name: decimal_0
   }
 
   measure: total_cat_price {
-    label: "Total Category Price "
+    label: "Sales💰"
     type: sum
     sql:
       CASE

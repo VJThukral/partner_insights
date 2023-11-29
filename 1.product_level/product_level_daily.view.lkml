@@ -1,101 +1,17 @@
 view: product_level_daily {
-  sql_table_name: `fulfillment-dwh-production.rl_sales_revenue.partnerships_product_level` ;;
+  derived_table: {
+    sql:
+      SELECT *
+      , CASE WHEN is_option IS TRUE THEN "Option" ELSE "Product" END AS product_option
+      , CASE WHEN is_upsell IS TRUE THEN 'With Upselling' ELSE 'Without Upselling' END AS product_upsell
+      FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_product_level`
+      ;;
+    # sql_trigger_value: SELECT MAX(report_period) FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_order_level`  ;;
+    # partition_keys: ["report_period"]
+    # cluster_keys: ["period_seg","global_entity_id","product_company"]
+    }
 
-  # derived_table: {
-  #   sql:SELECT
-  #         opa.period_seg,
-  #         opa.global_entity_id,
-  #         opa.country_name,
-  #         opa.report_period,
-  #         opa.city_group,
-  #         opa.category_group_global,
-  #         opa.is_key_account,
-  #         opa.store_type_group,
-  #         opa.product_company_market,
-  #         opa.product_company,
-  #         opa.product_type,
-  #         opa.product_subtype,
-  #         opa.product_name,
-  #         opa.product_size_numeral,
-  #         opa.product_size_unit,
-  #         opa.is_option,
-  #         opa.is_upsell,
-  #         vendors AS restaurants,
-  #         opa.orders,
-  #         opa.quantity,
-  #         opa.total_price_lc,
-  #         opa.total_price_eur,
-  #         FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_product_level` AS opa
-  #         WHERE period_seg = "Daily"
-
-  #     UNION ALL
-
-
-  #     SELECT
-  #     opa.period_seg,
-  #     "Test" AS global_entity_id,
-  #     "Test" AS country_name,
-  #     opa.report_period,
-  #     "Test" AS city_group,
-  #     "Test" AS category_group_global,
-  #     opa.is_key_account,
-  #     opa.store_type_group,
-  #     product_company_market,
-  #     "Test" AS product_company,
-  #     "Test" AS product_type,
-  #     "Test" AS product_subtype,
-  #     "Test A" AS product_name,
-  #     "Test" AS product_size_numeral,
-  #     "Test" AS product_size_unit,
-  #     opa.is_option,
-  #     opa.is_upsell,
-  #     vendors AS restaurants,
-  #     opa.orders,
-  #     opa.quantity,
-  #     opa.total_price_lc,
-  #     opa.total_price_eur,
-  #     FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_product_level` AS opa
-  #     WHERE global_entity_id IN ('FP_SG',"MJM_AT","DJ_CZ")
-  #     AND product_company IN ('Coca Cola')
-  #     AND period_seg = "Daily"
-
-  #     UNION ALL
-
-
-  #     SELECT
-  #     opa.period_seg,
-  #     "Test" AS global_entity_id,
-  #     "Test" AS country_name,
-  #     opa.report_period,
-  #     "Test" AS city_group,
-  #     "Test" AS category_group_global,
-  #     opa.is_key_account,
-  #     opa.store_type_group,
-  #     product_company_market,
-  #     "Test" AS product_company,
-  #     "Test" AS product_type,
-  #     "Test" AS product_subtype,
-  #     "Test B" AS product_name,
-  #     "Test" AS product_size_numeral,
-  #     "Test" AS product_size_unit,
-  #     opa.is_option,
-  #     opa.is_upsell,
-  #     vendors AS restaurants,
-  #     opa.orders,
-  #     opa.quantity,
-  #     opa.total_price_lc,
-  #     opa.total_price_eur,
-  #     FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_product_level` AS opa
-  #     WHERE global_entity_id IN ('FP_SG',"MJM_AT","DJ_CZ")
-  #     AND product_company IN ('Redbull','AB Inbev')
-  #     AND period_seg = "Daily"
-  #     ;;
-
-  #   sql_trigger_value: SELECT MAX(report_period) FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_order_level`  ;;
-  #   partition_keys: ["report_period"]
-  #   cluster_keys: ["period_seg","global_entity_id","product_company"]
-  # }
-
+  #sql_table_name: `fulfillment-dwh-production.rl_sales_revenue.partnerships_product_level` ;;
 
   parameter: date_granularity {
     type: string

@@ -1,53 +1,7 @@
 view: top_restaurants {
   label: "top_restaurants"
-  derived_table: {
-    sql:SELECT * FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_top_restaurants`
+  sql_table_name:`fulfillment-dwh-production.rl_sales_revenue.partnerships_top_restaurants` ;;
 
-    UNION ALL
-
-    SELECT "Test" AS global_entity_id,
-          "Test" AS country_name,
-          "Test" AS city_group,
-          "Test" AS vendor_id,
-          "Test" AS product_company,
-          has_sold,
-          category_group_global,
-          "Test A" AS vendor_name,
-          "Test A" AS street,
-          "Test A" AS zip,
-          1 AS top_ranking,
-          1 AS company_top_ranking,
-          1 AS company_bottom_ranking,
-          0 AS total_orders,
-          0 AS company_orders,
-    FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_top_restaurants`
-    WHERE global_entity_id IN ('FP_SG',"MJM_AT","DJ_CZ")
-    AND product_company IN ('Coca Cola')
-
-    UNION ALL
-
-    SELECT "Test" AS global_entity_id,
-          "Test" AS country_name,
-          "Test" AS city_group,
-          "Test" AS vendor_id,
-          "Test" AS product_company,
-          has_sold,
-          category_group_global,
-          "Test B" AS vendor_name,
-          "Test B" AS street,
-          "Test B" AS zip,
-          1 AS top_ranking,
-          1 AS company_top_ranking,
-          1 AS company_bottom_ranking,
-          0 AS total_orders,
-          0 AS company_orders,
-    FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_top_restaurants`
-    WHERE global_entity_id IN ('FP_SG',"MJM_AT","DJ_CZ",'FP_MY',"FP_MM")
-    AND product_company = 'Coca Cola'
-
-
-      ;;
-  }
 
   dimension: global_entity_id {}
   dimension: country_name {}

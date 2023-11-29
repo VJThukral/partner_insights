@@ -1,25 +1,26 @@
 view: orders_hour_weekday {###Total platform orders in the last 6 months
   label: "orders_hour_weekday"
-  derived_table: {
-    sql: SELECT *
-    FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_orders_by_hour`
+  sql_table_name: `fulfillment-dwh-production.rl_sales_revenue.partnerships_orders_by_hour`  ;;
+  # derived_table: {
+  #   sql: SELECT *
+  #   FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_orders_by_hour`
 
-    UNION ALL
+  #   UNION ALL
 
-    SELECT 'Test' AS global_entity_id,
-        'Test' AS country_name,
-        report_period,
-        report_period_weekday,
-        report_period_hour,
-        'Test' AS city_group,
-        'Test' AS product_company,
-        'Test' AS product_name,
-        orders,
-    FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_orders_by_hour`
-    WHERE global_entity_id IN ('FP_SG',"MJM_AT","DJ_CZ",'FP_MY',"FP_MM")
+  #   SELECT 'Test' AS global_entity_id,
+  #       'Test' AS country_name,
+  #       report_period,
+  #       report_period_weekday,
+  #       report_period_hour,
+  #       'Test' AS city_group,
+  #       'Test' AS product_company,
+  #       'Test' AS product_name,
+  #       orders,
+  #   FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_orders_by_hour`
+  #   WHERE global_entity_id IN ('FP_SG',"MJM_AT","DJ_CZ",'FP_MY',"FP_MM")
 
-    ;;
-    }
+    # ;;
+    # }
 
   dimension_group: order {
     #convert_tz: no
