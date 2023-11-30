@@ -7,9 +7,9 @@ view: company_level_all {
           "" AS product_type,
           "" AS product_subtype,
           "" AS product_name,
-      FROM fulfillment-dwh-production.rl_sales_revenue.partnerships_company_level
+      FROM fulfillment-dwh-production.cl_vendor.partnerships_company_level
       ;;
-    # sql_trigger_value: SELECT MAX(report_period) FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_order_level`  ;;
+    # sql_trigger_value: SELECT MAX(report_period) FROM `fulfillment-dwh-production.cl_vendor.partnerships_order_level`  ;;
     # partition_keys: ["report_period"]
     # cluster_keys: ["period_seg","global_entity_id","product_company"]
   }
@@ -40,7 +40,7 @@ view: company_level_all {
       #     "" AS product_type,
       #     "" AS product_subtype,
       #     "" AS product_name
-      # FROM fulfillment-dwh-production.rl_sales_revenue.partnerships_product_level
+      # FROM fulfillment-dwh-production.cl_vendor.partnerships_product_level
       # WHERE global_entity_id IN ('FP_SG',"MJM_AT")
       # AND product_company IN ('Coca Cola')
       # GROUP BY 1,2,3,4,5,6,7,8,9,10,17,18,19,20,21

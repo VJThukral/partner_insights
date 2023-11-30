@@ -1,5 +1,5 @@
 view: coke_aut {
-  sql_table_name: `fulfillment-dwh-production.rl_sales_revenue.partnerships_order_level` ;;
+  sql_table_name: `fulfillment-dwh-production.cl_vendor.partnerships_order_level` ;;
 
   dimension: report_period {
     type: date

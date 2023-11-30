@@ -25,7 +25,7 @@ view: company_level_split {
         SUM(opa.quantity)                   as quantity,
         SUM(opa.total_price_lc)             as total_price_lc,
         SUM(opa.total_price_eur)            as total_price_eur
-    FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_order_level` AS opa
+    FROM `fulfillment-dwh-production.cl_vendor.partnerships_order_level` AS opa
     GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
     ),
 
@@ -53,7 +53,7 @@ view: company_level_split {
         SUM(opa.quantity)                   as quantity,
         SUM(opa.total_price_lc)             as total_price_lc,
         SUM(opa.total_price_eur)            as total_price_eur
-    FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_order_level` AS opa
+    FROM `fulfillment-dwh-production.cl_vendor.partnerships_order_level` AS opa
     GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
     ),
 
@@ -81,7 +81,7 @@ view: company_level_split {
         SUM(opa.quantity)                   as quantity,
         SUM(opa.total_price_lc)             as total_price_lc,
         SUM(opa.total_price_eur)            as total_price_eur
-    FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_order_level` AS opa
+    FROM `fulfillment-dwh-production.cl_vendor.partnerships_order_level` AS opa
     GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
     ),
 
@@ -97,7 +97,7 @@ view: company_level_split {
     FROM company_split_consolidated
 
       ;;
-    sql_trigger_value: SELECT MAX(report_period) FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_order_level`  ;;
+    sql_trigger_value: SELECT MAX(report_period) FROM `fulfillment-dwh-production.cl_vendor.partnerships_order_level`  ;;
     partition_keys: ["report_period"]
     cluster_keys: ["period_seg","global_entity_id","product_company"]
   }

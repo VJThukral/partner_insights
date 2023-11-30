@@ -4,13 +4,13 @@ view: unique_customers {
     sql: {% if (product_name._is_filtered) %} --Brand Level
 
         SELECT *
-        FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_company_monthly_stats`
+        FROM `fulfillment-dwh-production.cl_vendor.partnerships_company_monthly_stats`
         WHERE granularity = "Brand"
 
         {% else %}  --Company Level
 
         SELECT *
-        FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_company_monthly_stats`
+        FROM `fulfillment-dwh-production.cl_vendor.partnerships_company_monthly_stats`
         WHERE granularity = "Company"
 
         {% endif %}

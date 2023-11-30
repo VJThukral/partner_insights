@@ -1,6 +1,6 @@
 view: top_restaurants {
   label: "top_restaurants"
-  sql_table_name:`fulfillment-dwh-production.rl_sales_revenue.partnerships_top_restaurants` ;;
+  sql_table_name:`fulfillment-dwh-production.cl_vendor.partnerships_top_restaurants` ;;
 
 
   dimension: global_entity_id {}

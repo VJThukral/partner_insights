@@ -13,7 +13,7 @@ view: cpg_meta_data {
         opa.vendor_id,
         opa.is_key_account,
         ARRAY_AGG(DISTINCT opa.product_company ORDER BY opa.product_company) AS CPG_list
-      FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_order_level` AS opa
+      FROM `fulfillment-dwh-production.cl_vendor.partnerships_order_level` AS opa
       WHERE opa.product_company != "Other"
       AND opa.product_company IS NOT NULL
       GROUP BY 1,2,3,4,5,6,7,8
@@ -30,7 +30,7 @@ view: cpg_meta_data {
       opa.vendor_id,
       opa.is_key_account,
       ARRAY_AGG(DISTINCT opa.product_company ORDER BY opa.product_company) AS CPG_list
-      FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_order_level` AS opa
+      FROM `fulfillment-dwh-production.cl_vendor.partnerships_order_level` AS opa
       WHERE opa.product_company != "Other"
       AND opa.product_company IS NOT NULL
       GROUP BY 1,2,3,4,5,6,7,8
@@ -47,7 +47,7 @@ view: cpg_meta_data {
       opa.vendor_id,
       opa.is_key_account,
       ARRAY_AGG(DISTINCT opa.product_company ORDER BY opa.product_company) AS CPG_list
-      FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_order_level` AS opa
+      FROM `fulfillment-dwh-production.cl_vendor.partnerships_order_level` AS opa
       WHERE opa.product_company != "Other"
       AND opa.product_company IS NOT NULL
       GROUP BY 1,2,3,4,5,6,7,8

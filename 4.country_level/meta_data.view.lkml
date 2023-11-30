@@ -1,11 +1,11 @@
 view: meta_data {
   label: "meta_data"
-  sql_table_name: `fulfillment-dwh-production.rl_sales_revenue.partnerships_metadata` ;;
+  sql_table_name: `fulfillment-dwh-production.cl_vendor.partnerships_metadata` ;;
   # derived_table: {
   #   sql: SELECT * FROM (
   #       SELECT *,
   #       "Others" AS product_company,
-  #       FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_metadata`
+  #       FROM `fulfillment-dwh-production.cl_vendor.partnerships_metadata`
 
   #       --UNION ALL
 
@@ -20,7 +20,7 @@ view: meta_data {
   #           --vendors,
   #           --orders,
   #           --"Others" AS product_company,
-  #       --FROM `fulfillment-dwh-production.rl_sales_revenue.partnerships_metadata`
+  #       --FROM `fulfillment-dwh-production.cl_vendor.partnerships_metadata`
   #       --WHERE global_entity_id IN ('FP_SG',"MJM_AT","DJ_CZ",'FP_MY',"FP_MM")
   #       )
   #   WHERE {% condition date_granularity %} period_seg {% endcondition %}
