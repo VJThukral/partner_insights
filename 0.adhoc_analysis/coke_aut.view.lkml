@@ -108,24 +108,24 @@ view: coke_aut {
   sql: ${TABLE}.store_type_group ;;
   }
 
-  dimension: is_option{
+  dimension: product_option{
   group_label: "Business Line"
-  type: yesno
-  sql: ${TABLE}.is_option ;;
+  type: string
+  sql: ${TABLE}.product_option ;;
   }
 
   dimension: is_upsell{
   group_label: "Business Line"
   type: yesno
-  sql: ${TABLE}.is_upsell ;;
+  sql: CASE WHEN ${TABLE}.product_upsell = 'With Upselling' THEN TRUE
+          ELSE FALSE
+          END;;
   }
 
   dimension: product_type {
   group_label: "Product"
   type: string
-  sql: CASE WHEN ${is_option} IS TRUE THEN 'Option'
-          ELSE 'Product'
-          END;;
+  sql: ${product_option};;
   }
 
   dimension: upselling {
