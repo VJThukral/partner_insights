@@ -1,17 +1,5 @@
 view: product_level_daily {
-  derived_table: {
-    sql:
-      SELECT *
-      , CASE WHEN is_option IS TRUE THEN "Option" ELSE "Product" END AS product_option
-      , CASE WHEN is_upsell IS TRUE THEN 'With Upselling' ELSE 'Without Upselling' END AS product_upsell
-      FROM `fulfillment-dwh-production.cl_vendor.partnerships_product_level`
-      ;;
-    # sql_trigger_value: SELECT MAX(report_period) FROM `fulfillment-dwh-production.cl_vendor.partnerships_order_level`  ;;
-    # partition_keys: ["report_period"]
-    # cluster_keys: ["period_seg","global_entity_id","product_company"]
-    }
-
-  #sql_table_name: `fulfillment-dwh-production.cl_vendor.partnerships_product_level` ;;
+ sql_table_name: `fulfillment-dwh-production.cl_vendor.partnerships_product_level` ;;
 
   parameter: date_granularity {
     type: string
