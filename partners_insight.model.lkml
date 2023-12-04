@@ -24,6 +24,14 @@ explore: product_level {
     filters: [product_level.product_company: "-Test"]
   }
 
+  join: top_100_vendors {
+    sql_on: ${top_100_vendors.vendor_name} = ${product_level.vendor_name}
+      ;;
+
+    type: inner
+    relationship: many_to_one
+  }
+
   label: "Partnership - Product Level"
   view_label: "Partnership - Product Level"
   persist_with: central_dwh_orders

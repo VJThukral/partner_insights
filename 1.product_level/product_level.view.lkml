@@ -4,7 +4,11 @@ label: "product_level"
     sql:
     SELECT ii.*
     FROM
-    {% if product_size._is_filtered or product_size_numeral._is_filtered %}
+    {% if vendor_id._is_filtered and (product_name._is_filtered or product_subtype._is_filtered or upselling._is_filtered or product_type._is_filtered) %}
+    ${vendor_level_split.SQL_TABLE_NAME} ii --vendor-level break down by option+upsell information
+    {% elsif vendor_id._is_filtered %}
+    ${vendor_level_all.SQL_TABLE_NAME} ii --vendor-level NOT break down by option+upsell information
+    {% elsif product_size._is_filtered or product_size_numeral._is_filtered %}
     ${product_level_daily.SQL_TABLE_NAME} ii --product-level: brand + size information
     {% elsif (product_name._is_filtered or product_subtype._is_filtered) and (upselling._is_filtered or product_type._is_filtered) %}
     ${brand_level_split.SQL_TABLE_NAME} ii --brand split
@@ -173,11 +177,26 @@ label: "product_level"
   }
 
   dimension: vendor_id {
-    hidden: yes
+    #hidden: yes
     label: "Vendor ID"
     type: string
     description: "Identifier for the vendor on the platform."
     sql: ${TABLE}.vendor_id ;;
+  }
+
+  dimension: vendor_name {
+    #hidden: yes
+    sql: ${TABLE}.vendor_name ;;
+  }
+
+  dimension: chain_id {
+    #hidden: yes
+    sql: ${TABLE}.chain_id ;;
+  }
+
+  dimension: chain_name {
+    #hidden: yes
+    sql: ${TABLE}.chain_name ;;
   }
 
   dimension: unique_vendor_id {
