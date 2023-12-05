@@ -2,7 +2,7 @@ view: company_level_all {
   derived_table: {
     sql:
       SELECT *
-      FROM `dhub-vendor.cl_vendor.partnerships_company_level`
+      FROM `fulfillment-dwh-production.cl_vendor.partnerships_company_level`
       WHERE data_granularity = "No option"
       ;;
     # sql_trigger_value: SELECT MAX(report_period) FROM `fulfillment-dwh-production.cl_vendor.partnerships_order_level`  ;;

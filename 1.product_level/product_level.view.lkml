@@ -10,9 +10,9 @@ label: "product_level"
     ${vendor_level_all.SQL_TABLE_NAME} ii --vendor-level NOT break down by option+upsell information
     {% elsif product_size._is_filtered or product_size_numeral._is_filtered %}
     ${product_level_daily.SQL_TABLE_NAME} ii --product-level: brand + size information
-    {% elsif (product_name._is_filtered or product_subtype._is_filtered or breakdown_value._value == 'Brand') and (upselling._is_filtered or product_type._is_filtered) %}
+    {% elsif (product_name._is_filtered or product_subtype._is_filtered) and (upselling._is_filtered or product_type._is_filtered) %}
     ${brand_level_split.SQL_TABLE_NAME} ii --brand split
-    {% elsif product_name._is_filtered or product_subtype._is_filtered or breakdown_value._value == 'Brand' %}
+    {% elsif product_name._is_filtered or product_subtype._is_filtered %}
     ${brand_level_all.SQL_TABLE_NAME} ii --brand all
     {% elsif (upselling._is_filtered or product_type._is_filtered) %}
     ${company_level_split.SQL_TABLE_NAME} ii --company split

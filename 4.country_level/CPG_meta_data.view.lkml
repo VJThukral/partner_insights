@@ -1,6 +1,6 @@
 #This is the only metric in Market Share module cant aggregated due to logic itself have to check full week/month
 view: cpg_meta_data {
-  sql_table_name: `dhub-vendor.cl_vendor.partnerships_cpg_metadata` ;;
+  sql_table_name: `fulfillment-dwh-production.cl_vendor.partnerships_cpg_metadata` ;;
 
   dimension: unique_key {
     hidden: yes

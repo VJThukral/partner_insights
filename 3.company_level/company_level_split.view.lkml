@@ -2,7 +2,7 @@ view: company_level_split {
   derived_table: {
     sql:
       SELECT *
-      FROM `dhub-vendor.cl_vendor.partnerships_company_level`
+      FROM `fulfillment-dwh-production.cl_vendor.partnerships_company_level`
       WHERE data_granularity = "With option"
       ;;
   }

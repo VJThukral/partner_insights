@@ -18,7 +18,7 @@ view: market_share_daily {
           SUM(opa.quantity) AS quantity,
           SUM(opa.total_price_lc) AS total_price_lc ,
           SUM(opa.total_price_eur) AS total_price_eur ,
-    FROM `dhub-vendor.cl_vendor.partnerships_company_level` opa
+    FROM `fulfillment-dwh-production.cl_vendor.partnerships_company_level` opa
     WHERE opa.data_granularity = "With option"
     AND opa.period_seg = "Daily"
     GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13
@@ -41,7 +41,7 @@ view: market_share_daily {
           0 AS quantity,
           0 AS total_price_lc ,
           0 AS total_price_eur ,
-    FROM `dhub-vendor.cl_vendor.partnerships_company_level` opa
+    FROM `fulfillment-dwh-production.cl_vendor.partnerships_company_level` opa
     WHERE opa.data_granularity = "With option"
     AND opa.period_seg = "Daily"
     ),
