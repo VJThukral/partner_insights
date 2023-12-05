@@ -18,8 +18,9 @@ view: market_share_daily {
           SUM(opa.quantity) AS quantity,
           SUM(opa.total_price_lc) AS total_price_lc ,
           SUM(opa.total_price_eur) AS total_price_eur ,
-    FROM ${company_level_split.SQL_TABLE_NAME} AS opa
-    WHERE opa.period_seg = "Daily"
+    FROM `dhub-vendor.cl_vendor.partnerships_company_level` opa
+    WHERE opa.data_granularity = "With option"
+    AND opa.period_seg = "Daily"
     GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13
 
     UNION ALL ---This query is to have "Others" to joinable with Country Data for Incidence Rate Calculation
@@ -40,8 +41,9 @@ view: market_share_daily {
           0 AS quantity,
           0 AS total_price_lc ,
           0 AS total_price_eur ,
-    FROM ${company_level_split.SQL_TABLE_NAME} AS opa
-    WHERE opa.period_seg = "Daily"
+    FROM `dhub-vendor.cl_vendor.partnerships_company_level` opa
+    WHERE opa.data_granularity = "With option"
+    AND opa.period_seg = "Daily"
     ),
 
     filter_relevant_category AS (

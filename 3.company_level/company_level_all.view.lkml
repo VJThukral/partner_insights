@@ -1,13 +1,9 @@
 view: company_level_all {
   derived_table: {
     sql:
-      SELECT * EXCEPT (product_name),
-          "" AS product_option,
-          "" AS product_upsell,
-          "" AS product_type,
-          "" AS product_subtype,
-          "" AS product_name,
-      FROM fulfillment-dwh-production.cl_vendor.partnerships_company_level
+      SELECT *
+      FROM `dhub-vendor.cl_vendor.partnerships_company_level`
+      WHERE data_granularity = "No option"
       ;;
     # sql_trigger_value: SELECT MAX(report_period) FROM `fulfillment-dwh-production.cl_vendor.partnerships_order_level`  ;;
     # partition_keys: ["report_period"]
