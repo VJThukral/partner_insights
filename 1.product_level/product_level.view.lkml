@@ -10,9 +10,9 @@ label: "product_level"
     ${vendor_level_all.SQL_TABLE_NAME} ii --vendor-level NOT break down by option+upsell information
     {% elsif product_size._is_filtered or product_size_numeral._is_filtered %}
     ${product_level_daily.SQL_TABLE_NAME} ii --product-level: brand + size information
-    {% elsif (product_name._is_filtered or product_subtype._is_filtered) and (upselling._is_filtered or product_type._is_filtered) %}
+    {% elsif (product_name._is_filtered or product_subtype._is_filtered or breakdown_value._value == 'Brand') and (upselling._is_filtered or product_type._is_filtered) %}
     ${brand_level_split.SQL_TABLE_NAME} ii --brand split
-    {% elsif product_name._is_filtered or product_subtype._is_filtered %}
+    {% elsif product_name._is_filtered or product_subtype._is_filtered or breakdown_value._value == 'Brand' %}
     ${brand_level_all.SQL_TABLE_NAME} ii --brand all
     {% elsif (upselling._is_filtered or product_type._is_filtered) %}
     ${company_level_split.SQL_TABLE_NAME} ii --company split
@@ -111,8 +111,20 @@ label: "product_level"
     allowed_value: { value: "Country" }
     allowed_value: { value: "City" }
     allowed_value: { value: "Brand" }
-    allowed_value: { value: "Product Category" }
-    allowed_value: { value: "Product Sub-Category" }
+  }
+
+  dimension: breakdown_value {
+    group_label: "Breakdown Dimension"
+    sql:
+    CASE
+      WHEN {% parameter breakdown_type %} = 'Country'
+        THEN 'Country'
+      WHEN {% parameter breakdown_type %} = 'City'
+        THEN 'City'
+      WHEN {% parameter breakdown_type %} = 'Brand'
+        THEN 'Brand'
+      ELSE 'None'
+    END ;;
   }
 
   dimension: breakdown {
@@ -126,10 +138,6 @@ label: "product_level"
         THEN ${city}
       WHEN {% parameter breakdown_type %} = 'Brand'
         THEN ${product_name}
-      WHEN {% parameter breakdown_type %} = 'Product Category'
-        THEN ${product_company_market}
-      WHEN {% parameter breakdown_type %} = 'Product Sub-Category'
-        THEN ${product_subtype}
       ELSE 'None'
     END ;;
   }
