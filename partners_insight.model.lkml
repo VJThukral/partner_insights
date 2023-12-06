@@ -32,6 +32,14 @@ explore: product_level {
     relationship: many_to_one
   }
 
+  join: top_10_city{
+    sql_on: ${top_10_city.city} = ${product_level.city}
+      ;;
+
+    type: inner
+    relationship: many_to_one
+  }
+
   label: "Partnership - Product Level"
   view_label: "Partnership - Product Level"
   persist_with: central_dwh_orders
