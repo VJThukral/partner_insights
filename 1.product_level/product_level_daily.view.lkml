@@ -195,17 +195,13 @@ view: product_level_daily {
   dimension: product_type {
     group_label: "Product"
     type: string
-    sql: CASE WHEN ${is_option} IS TRUE THEN 'Option'
-              ELSE 'Product'
-              END;;
+    sql: ${TABLE}.product_option;;
   }
 
   dimension: upselling {
     group_label: "Product"
     type: string
-    sql: CASE WHEN ${is_upsell} IS TRUE THEN 'With Upselling'
-              ELSE 'Without Upselling'
-              END;;
+    sql: ${TABLE}.product_upsell;;
   }
 
 
