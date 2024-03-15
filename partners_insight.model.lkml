@@ -137,6 +137,24 @@ explore: top_restaurants {
     user_attribute: global_entity_id
   }
 
+  join: top_restaurants_ranking {
+    sql_on: ${top_restaurants.global_entity_id} = ${top_restaurants_ranking.global_entity_id}
+            and ${top_restaurants.vendor_id} = ${top_restaurants_ranking.vendor_id}
+      ;;
+
+    type: inner
+    relationship: many_to_one
+  }
+
+  join: bottom_restaurants {
+    sql_on: ${top_restaurants.global_entity_id} = ${bottom_restaurants.global_entity_id}
+            and ${top_restaurants.vendor_id} = ${bottom_restaurants.vendor_id}
+      ;;
+
+    type: inner
+    relationship: many_to_one
+  }
+
 }
 
 explore: meta_data {
