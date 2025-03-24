@@ -31,6 +31,10 @@ view: top_restaurants {
     type: yesno
     sql: ${TABLE}.has_sold ;;
   }
+  dimension: is_key_account {
+    type: yesno
+    sql: ${TABLE}.is_key_account ;;
+  }
   dimension: vendor_name {}
   dimension: street {}
   dimension: zip {}
