@@ -339,4 +339,3 @@ explore: coke_aut {
 
 # explore: talabat_incidence_rate {
 #   view_label: "Parnership Adhoc - Talabat Incidence Rate"
-# }
