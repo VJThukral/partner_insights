@@ -19,7 +19,7 @@ datagroup: central_dwh_orders {
 # }
 
 explore: product_level {
-  sql_always_where: ${order_raw} BETWEEN DATE_TRUNC(DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR), YEAR) AND CURRENT_DATE() ;;
+  sql_always_where: ${order_raw} BETWEEN DATETIME(DATE_TRUNC(DATE_SUB(CURRENT_DATE(), INTERVAL 26 MONTH), MONTH)) AND CURRENT_DATE() ;;
   always_filter: {
     filters: [product_level.product_company: "-Test"]
   }
@@ -61,7 +61,7 @@ explore: product_level {
 }
 
 explore: product_level_daily {
-  sql_always_where: ${order_raw} BETWEEN DATE_TRUNC(DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR), YEAR) AND CURRENT_DATE() ;;
+  sql_always_where: ${order_raw} BETWEEN DATETIME(DATE_TRUNC(DATE_SUB(CURRENT_DATE(), INTERVAL 26 MONTH), MONTH)) AND CURRENT_DATE() ;;
   always_filter: {
     filters: [product_level_daily.period_seg: "Daily" ,product_level_daily.product_company: "-Test"]
   }
@@ -87,7 +87,7 @@ explore: product_level_daily {
 }
 
 explore: product_level_2 {
-  sql_always_where: ${order_raw} BETWEEN DATE_TRUNC(DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR), YEAR) AND CURRENT_DATE() ;;
+  sql_always_where: ${order_raw} BETWEEN DATETIME(DATE_TRUNC(DATE_SUB(CURRENT_DATE(), INTERVAL 26 MONTH), MONTH)) AND CURRENT_DATE() ;;
   always_filter: {
     filters: [product_level_2.product_company_market: "-NULL",product_level_2.product_company_filter: "-Test"]
   }
@@ -158,7 +158,7 @@ explore: top_restaurants {
 }
 
 explore: meta_data {
-  sql_always_where: ${order_raw} BETWEEN DATE_TRUNC(DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR), YEAR) AND CURRENT_DATE() ;;
+  sql_always_where: ${order_raw} BETWEEN DATETIME(DATE_TRUNC(DATE_SUB(CURRENT_DATE(), INTERVAL 26 MONTH), MONTH)) AND CURRENT_DATE() ;;
   label: "Partnership - Country Data"
   view_label: "Partnership - Country Level"
   persist_with: central_dwh_orders
@@ -177,7 +177,7 @@ explore: meta_data {
 explore: cpg_meta_data {
   label: "Partnership - CPG Incidence Rate"
   view_label: "CPG Market Orders"
-  sql_always_where: ${order_raw} BETWEEN DATE_TRUNC(DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR), YEAR) AND CURRENT_DATE() ;;
+  sql_always_where: ${order_raw} BETWEEN DATETIME(DATE_TRUNC(DATE_SUB(CURRENT_DATE(), INTERVAL 26 MONTH), MONTH)) AND CURRENT_DATE() ;;
   conditionally_filter: {
     filters: [cpg_meta_data.date_granularity: "Monthly"]
     unless: [date_granularity]
@@ -235,7 +235,7 @@ explore: cpg_meta_data {
 # }
 
 explore: brand_level {
-  sql_always_where: ${order_raw} BETWEEN DATE_TRUNC(DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR), YEAR) AND CURRENT_DATE() ;;
+  sql_always_where: ${order_raw} BETWEEN DATETIME(DATE_TRUNC(DATE_SUB(CURRENT_DATE(), INTERVAL 26 MONTH), MONTH)) AND CURRENT_DATE() ;;
   # always_filter: {
   #   filters: [brand_level.date_granularity: "Monthly"]
   # }
@@ -270,7 +270,7 @@ explore: brand_level {
 }
 
 explore: brand_level_split {
-  sql_always_where: ${order_raw} BETWEEN DATE_TRUNC(DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR), YEAR) AND CURRENT_DATE() ;;
+  sql_always_where: ${order_raw} BETWEEN DATETIME(DATE_TRUNC(DATE_SUB(CURRENT_DATE(), INTERVAL 26 MONTH), MONTH)) AND CURRENT_DATE() ;;
   # always_filter: {
   #   filters: [brand_level_split.date_granularity: "Monthly"]
   # }
@@ -295,7 +295,7 @@ explore: brand_level_split {
 }
 
 explore: unique_customers {
-  sql_always_where: ${order_raw} BETWEEN DATE_TRUNC(DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR), YEAR) AND CURRENT_DATE() ;;
+  sql_always_where: ${order_raw} BETWEEN DATETIME(DATE_TRUNC(DATE_SUB(CURRENT_DATE(), INTERVAL 26 MONTH), MONTH)) AND CURRENT_DATE() ;;
   view_label: "Partnership - Unique Customers"
   label: "Partnership - Unique Customers"
   persist_with: central_dwh_orders
